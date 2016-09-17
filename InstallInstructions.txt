@@ -1,0 +1,91 @@
+
+Raspberry Pi 3 installation suggestion by Tony D!
+
+Install -legacy to get the normal 'node' command instead of the debian 'nodejs'
+Probably installs an old version because the apt package is old
+> apt-get install nodejs-legacy npm
+
+Install the nodejs 'n' package globally
+'n' is a tool to install nodejs version
+> sudo npm install -g n
+
+Install latest version of nodejs
+> sudo n latest
+(installed v6.5.0)
+
+Remove the apt-get intalled because it conflicts
+> sudo apt-get remove nodejs
+
+Add a symlink
+> sudo ln -s /usr/local/bin/node /usr/bin/node
+
+==========================
+Installing nodejs libraries
+- Either globally so it can be included from any program
+ -- sudo npm install -g <package>
+- or install it in a directory
+ -- npm install <package> (in the directory)
+
+==========================
+For the noble package to install I had to install
+> sudo apt-get install libudev-dev
+> npm install noble
+
+
+==========================
+Install latest version of bluez
+Instructions at https://learn.adafruit.com/install-bluez-on-the-raspberry-pi/installation
+Download and unpack
+> cd ~
+> wget http://www.kernel.org/pub/linux/bluetooth/bluez-5.41.tar.xz
+> tar xvf bluez-5.41.tar.xz
+> cd bluez-5.41
+
+Install dependencies
+> sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libical-dev libreadline-dev
+
+Compile and install bluez
+> ./configure
+> make
+> sudo make install
+
+Setup bluez Service
+> systemctl daemon-reload
+Check status
+> systemctl status bluetooth
+
+==>The message "Sap driver initialization failed." is because Sim access profile driver could not load
+==>Disable it with:
+==> sudo nano /etc/systemd/system/bluetooth.target.wants/bluetooth.service
+==Change ExecStart=/usr/local/libexec/bluetooth/bluetoothd to ExecStart=/usr/local/libexec/bluetooth/bluetoothd --noplugin=sap
+==> systemctl daemon-reload
+==> service bluetooth restart
+==> sudo systemctl start bluetooth
+
+The message "Failed to obtain handles for "Service Changed" characteristic" is a harmless warning
+
+Start bluez automatically on boot
+> sudo systemctl enable bluetooth
+
+Enable bluetooth Low Energy Features
+> sudo nano /lib/systemd/system/bluetooth.service
+Add --experimental to the ExecStart line
+> sudo systemctl daemon-reload
+> sudo systemctl restart bluetooth
+
+==================
+Install bleno
+> sudo apt-get install libbluetooth-dev
+> sudo apt-get install libudev-dev
+Go to directory where to install the nodejs module
+> npm install bleno
+
+Stop bluetoothd
+> sudo systemctl stop bluetooth
+persist it over boots
+> sudo systemctl disable bluetooth
+Power up the bluetooth adapter
+> sudo hciconfig hci0 up
+==================
+
+

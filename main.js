@@ -1,0 +1,39 @@
+var bleno = require('bleno');
+
+var BlenoPrimaryService = bleno.PrimaryService;
+
+var BatteryService = require('./battery-service');
+var batteryService = new BatteryService();
+var RadioConfigurationService = require('./radio-configuration-service');
+var radioConfigurationService = new RadioConfigurationService();
+var MiscService = require('./misc-service');
+var miscService = new MiscService();
+
+console.log('bleno - echo');
+
+bleno.on('stateChange', function(state) {
+  console.log('on -> stateChange: ' + state);
+
+  if (state === 'poweredOn') {
+    bleno.startAdvertising('WiRoc Device', [batteryService.uuid, radioConfigurationService.uuid]);
+  } else {
+    bleno.stopAdvertising();
+  }
+});
+
+bleno.on('advertisingStart', function(error) {
+  console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
+
+  if (!error) {
+    bleno.setServices([
+        batteryService,
+        radioConfigurationService,
+        miscService
+      ], function(error) {
+        console.log('setServices: '  + (error ? 'error ' + error : 'success'));
+      }
+    );
+  }
+});
+
+
