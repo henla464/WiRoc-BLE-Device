@@ -26,8 +26,8 @@ var BatteryLevelCharacteristic = function() {
 util.inherits(BatteryLevelCharacteristic, Characteristic);
 
 BatteryLevelCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  var percent = '50';
-  console.log(percent);
+  var percent = '100';
+  console.log('Battery level - onReadRequest: value (dec)= ' + percent);
   percent = parseInt(percent, 10);
   callback(this.RESULT_SUCCESS, new Buffer([percent]));
 };

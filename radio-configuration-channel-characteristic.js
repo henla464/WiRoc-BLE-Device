@@ -22,7 +22,7 @@ var RadioConfigurationChannelCharacteristic = function() {
     ]
   });
 
-  this._channel = new Buffer(0);
+  this._channel = new Buffer([5]);
   //this._updateValueCallback = null;
 };
 

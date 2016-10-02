@@ -22,14 +22,13 @@ var RadioConfigurationAcknowledgementCharacteristic = function() {
     ]
   });
 
-  this._acknowledge = new Buffer(0);
+  this._acknowledge = new Buffer([1]);
   //this._updateValueCallback = null;
 };
 
 util.inherits(RadioConfigurationAcknowledgementCharacteristic, Characteristic);
 
 RadioConfigurationAcknowledgementCharacteristic.prototype.onReadRequest = function(offset, callback) {
-//  var channel = this._channel;
   console.log(this._acknowledge);
   callback(this.RESULT_SUCCESS, this._acknowledge);
 };

@@ -8,6 +8,8 @@ var RadioConfigurationService = require('./radio-configuration-service');
 var radioConfigurationService = new RadioConfigurationService();
 var MiscService = require('./misc-service');
 var miscService = new MiscService();
+var MeosService = require('./meos-service');
+var meosService = new MeosService();
 
 console.log('bleno - echo');
 
@@ -28,12 +30,19 @@ bleno.on('advertisingStart', function(error) {
     bleno.setServices([
         batteryService,
         radioConfigurationService,
-        miscService
+        miscService,
+	meosService
       ], function(error) {
         console.log('setServices: '  + (error ? 'error ' + error : 'success'));
       }
     );
   }
+});
+
+
+bleno.on('accept', function(clientAddress) {
+	console.log('Connect from: ' + clientAddress);
+	
 });
 
 
