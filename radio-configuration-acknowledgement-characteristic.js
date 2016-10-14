@@ -1,5 +1,6 @@
 var util = require('util');
 var bleno = require('bleno');
+var httphelper = require('./http-helper');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -21,29 +22,35 @@ var RadioConfigurationAcknowledgementCharacteristic = function() {
       })
     ]
   });
-
-  this._acknowledge = new Buffer([1]);
-  //this._updateValueCallback = null;
 };
 
 util.inherits(RadioConfigurationAcknowledgementCharacteristic, Characteristic);
 
 RadioConfigurationAcknowledgementCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log(this._acknowledge);
-  callback(this.RESULT_SUCCESS, this._acknowledge);
+  console.log('RadioConfigurationAcknowledgementCharacteristic - onReadRequest');
+  var thisObj = this;
+  httphelper.getAcknowledgementRequested(function (status, ackReq) {
+    console.log('RadioConfigurationAcknowledgementCharacteristic - onReadRequest:  status = "' + status + '" value = ' + (ackReq != null ? (ackReq ? 'True' : 'False') : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS, new Buffer([ackReq ? 1 : 0]));
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+    }
+  });
 };
 
 RadioConfigurationAcknowledgementCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  this._acknowledge = data;
-
-  console.log('RadioConfigurationAcknowledgementCharacteristic - onWriteRequest: value = ' + this._acknowledge.toString('hex'));
-
-  //if (this._updateValueCallback) {
-  //  console.log('EchoCharacteristic - onWriteRequest: notifying');
-  //  this._updateValueCallback(this._value);
-  //}
-
-  callback(this.RESULT_SUCCESS);
+  console.log('RadioConfigurationAcknowledgementCharacteristic - onWriteRequest');
+  var thisObj = this;
+  var ack = data[0] == 1;
+  httphelper.setAcknowledgementRequested(ack, function(status, ackReq) {
+    console.log('RadioConfigurationAcknowledgementCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (ackReq != null ? (ackReq ? 'True' : 'False') : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR);
+    }
+  });
 };
 
 module.exports = RadioConfigurationAcknowledgementCharacteristic;

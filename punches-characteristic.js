@@ -1,4 +1,5 @@
 var util = require('util');
+var httphelper = require('./http-helper');
 
 var bleno = require('bleno');
 

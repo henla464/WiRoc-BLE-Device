@@ -1,5 +1,6 @@
 var util = require('util');
 var bleno = require('bleno');
+var httphelper = require('./http-helper');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -22,28 +23,39 @@ var MeosIPPortCharacteristic = function() {
     ]
   });
 
-  this._ipport = new Buffer([0x10, 0x27]);
-  //this._updateValueCallback = null;
+//  this._ipport = new Buffer([0x10, 0x27]);
 };
 
 util.inherits(MeosIPPortCharacteristic, Characteristic);
 
 MeosIPPortCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MeosIPPortCharacteristic - onReadRequest: value = ' + this._ipport.toString('hex'));
-  callback(this.RESULT_SUCCESS, this._ipport);
+  console.log('MeosIPPortCharacteristic - onReadRequest');
+  var thisObj = this;
+  httphelper.getSendToMeosIPPort(function (status, port) {
+    console.log('MeosIPPortCharacteristic - onReadRequest: status = "' + status + '" value = ' + (port != null ? port : 'null'));
+    var intPort = parseInt(port);
+    if (status == 'OK') {
+      var buf = new Buffer(2);
+      buf.writeUInt16LE(intPort);
+      callback(thisObj.RESULT_SUCCESS, buf);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+    }
+  });
 };
 
 MeosIPPortCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  this._ipport = data;
-
-  console.log('MeosIPPortCharacteristic - onWriteRequest: value = ' + this._ipport.toString('hex'));
-
-  //if (this._updateValueCallback) {
-  //  console.log('EchoCharacteristic - onWriteRequest: notifying');
-  //  this._updateValueCallback(this._value);
-  //}
-
-  callback(this.RESULT_SUCCESS);
+  console.log('MeosIPPortCharacteristic - onWriteRequest');
+  var thisObj = this;
+  var ipPort = data.readUInt16LE();
+  httphelper.setSendToMeosIPPort(ipPort, function(status, retIPPort) {
+    console.log('MeosIPPortCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retIPPort != null ? retIPPort : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR);
+    }
+  });
 };
 
 module.exports = MeosIPPortCharacteristic;

@@ -1,5 +1,6 @@
 var util = require('util');
 var bleno = require('bleno');
+var httphelper = require('./http-helper');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -22,29 +23,39 @@ var RadioConfigurationChannelCharacteristic = function() {
     ]
   });
 
-  this._channel = new Buffer([5]);
-  //this._updateValueCallback = null;
+//  this._channel = new Buffer([5]);
 };
 
 util.inherits(RadioConfigurationChannelCharacteristic, Characteristic);
 
 RadioConfigurationChannelCharacteristic.prototype.onReadRequest = function(offset, callback) {
-//  var channel = this._channel;
-  console.log(this._channel);
-  callback(this.RESULT_SUCCESS, this._channel);
+  console.log('RadioConfigurationChannelCharacteristic - onReadRequest');
+  var thisObj = this;
+  httphelper.getChannel(function (status, channel) {
+    var intChannel = parseInt(channel);
+    console.log('RadioConfigurationChannelCharacteristic - onReadRequest: status = "' + status + '" value = ' + (channel != null ? channel : 'null'));
+    if (status == 'OK') {
+      console.log('read channel success: ' + this.RESULT_SUCCESS);
+      callback(thisObj.RESULT_SUCCESS, new Buffer([intChannel]));
+    } else {
+      console.log('read channel fail: ' + this.RESULT_UNLIKELY_ERROR);
+      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+    }
+  });
 };
 
 RadioConfigurationChannelCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  this._channel = data;
-
-  console.log('RadioConfigurationChannelCharacteristic - onWriteRequest: value = ' + this._channel.toString('hex'));
-
-  //if (this._updateValueCallback) {
-  //  console.log('EchoCharacteristic - onWriteRequest: notifying');
-  //  this._updateValueCallback(this._value);
-  //}
-
-  callback(this.RESULT_SUCCESS);
+  console.log('RadioConfigurationChannelCharacteristic - onWriteRequest');
+  var thisObj = this;
+  var channel = data[0];
+  httphelper.setChannel(channel, function(status, retChannel) {
+    console.log('RadioConfigurationChannelCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retChannel != null ? retChannel : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR);
+    }
+  });
 };
 
 module.exports = RadioConfigurationChannelCharacteristic;

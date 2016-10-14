@@ -1,5 +1,6 @@
 var util = require('util');
 var bleno = require('bleno');
+var httphelper = require('./http-helper');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -22,28 +23,37 @@ var MeosIPCharacteristic = function() {
     ]
   });
 
-  this._ip = new Buffer([0x31,0x39,0x32,0x2E,0x31,0x36,0x38,0x2E,0x30,0x2E,0x32]); // 192.168.0.2
-  //this._updateValueCallback = null;
+ // this._ip = new Buffer([0x31,0x39,0x32,0x2E,0x31,0x36,0x38,0x2E,0x30,0x2E,0x32]); // 192.168.0.2
 };
 
 util.inherits(MeosIPCharacteristic, Characteristic);
 
 MeosIPCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MeosIPCharacteristic - onReadRequest: value = ' + this._ip.toString('hex'));
-  callback(this.RESULT_SUCCESS, this._ip);
+  console.log('MeosIPCharacteristic - onReadRequest');
+  var thisObj = this;
+  httphelper.getSendToMeosIP(function (status, ip) {
+    console.log('MeosIPCharacteristic - onReadRequest: status = "' + status + '" value = ' + (ip != null ? ip : 'null'));
+    var buf = new Buffer(ip, "utf-8");
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS, buf);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+    }
+  });
 };
 
 MeosIPCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  this._ip = data;
-
-  console.log('MeosIPCharacteristic - onWriteRequest: value = ' + this._ip.toString('hex'));
-
-  //if (this._updateValueCallback) {
-  //  console.log('EchoCharacteristic - onWriteRequest: notifying');
-  //  this._updateValueCallback(this._value);
-  //}
-
-  callback(this.RESULT_SUCCESS);
+  console.log('MeosIPCharacteristic - onWriteRequest');
+  var thisObj = this;
+  var ip = data.toString('utf-8')
+  httphelper.setSendToMeosIP(ip, function(status, retIP) {
+    console.log('MeosIPCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retIP != null ? retIP : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR);
+    }
+  });
 };
 
 module.exports = MeosIPCharacteristic;

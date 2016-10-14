@@ -1,5 +1,6 @@
 var util = require('util');
 var bleno = require('bleno');
+var httphelper = require('./http-helper');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -21,29 +22,35 @@ var MeosEnabledCharacteristic = function() {
       })
     ]
   });
-
-  this._enabled = new Buffer([0]);
-  //this._updateValueCallback = null;
 };
 
 util.inherits(MeosEnabledCharacteristic, Characteristic);
 
 MeosEnabledCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MeosEnabledCharacteristic - onReadRequest: value = ' + this._enabled.toString('hex'));
-  callback(this.RESULT_SUCCESS, this._enabled);
+  console.log('MeosEnabledCharacteristic - onReadRequest');
+  var thisObj = this;
+  httphelper.getSendToMeosEnabled(function (status, enabled) {
+    console.log('MeosEnabledCharacteristic - onReadRequest: status = "' + status + '" value = ' + (enabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS, new Buffer([enabled ? 1 : 0]));
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+    }
+  });
 };
 
 MeosEnabledCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  this._enabled = data;
-
-  console.log('MeosEnabledCharacteristic - onWriteRequest: value = ' + this._enabled.toString('hex'));
-
-  //if (this._updateValueCallback) {
-  //  console.log('EchoCharacteristic - onWriteRequest: notifying');
-  //  this._updateValueCallback(this._value);
-  //}
-
-  callback(this.RESULT_SUCCESS);
+  console.log('MeosEnabledCharacteristic - onWriteRequest');
+  var thisObj = this;
+  var enabled = data[0] == 1;
+  httphelper.setSendToMeosEnabled(enabled, function(status, retEnabled) {
+    console.log('MeosEnabledCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retEnabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR);
+    }
+  });
 };
 
 module.exports = MeosEnabledCharacteristic;
