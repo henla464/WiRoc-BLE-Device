@@ -35,7 +35,7 @@ RadioConfigurationChannelCharacteristic.prototype.onReadRequest = function(offse
     var intChannel = parseInt(channel);
     console.log('RadioConfigurationChannelCharacteristic - onReadRequest: status = "' + status + '" value = ' + (channel != null ? channel : 'null'));
     if (status == 'OK') {
-      console.log('read channel success: ' + this.RESULT_SUCCESS);
+      console.log('read channel success: ' + thisObj.RESULT_SUCCESS);
       callback(thisObj.RESULT_SUCCESS, new Buffer([intChannel]));
     } else {
       console.log('read channel fail: ' + this.RESULT_UNLIKELY_ERROR);
