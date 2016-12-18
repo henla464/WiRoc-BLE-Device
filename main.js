@@ -10,6 +10,8 @@ var MiscService = require('./misc-service');
 var miscService = new MiscService();
 var MeosService = require('./meos-service');
 var meosService = new MeosService();
+var NetworkService = require('./network-service');
+var networkService = new NetworkService();
 
 console.log('bleno - echo');
 
@@ -31,7 +33,8 @@ bleno.on('advertisingStart', function(error) {
         batteryService,
         radioConfigurationService,
         miscService,
-	meosService
+	meosService,
+	networkService
       ], function(error) {
         console.log('setServices: '  + (error ? 'error ' + error : 'success'));
       }
