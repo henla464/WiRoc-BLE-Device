@@ -6,17 +6,17 @@ var exec = require('child_process').exec;
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var NetworkRenewIPCharacteristic = function() {
+var NetworkIPCharacteristic = function() {
   this.wifiConnectData = null;
 
-  NetworkRenewIPCharacteristic.super_.call(this, {
+  NetworkIPCharacteristic.super_.call(this, {
     uuid: 'F5EA6204-BCC5-4406-A981-89C6C5FC09CF',
-    properties: ['write'],
+    properties: ['read', 'write'],
     descriptors: [
       // User description
       new Descriptor({
         uuid: '2901',
-        value: 'Request a new DHCP ip address'
+        value: 'Get the ip address or request a new DHCP ip address'
       }),
       // presentation format: 0x19=utf8, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
       new Descriptor({
@@ -27,10 +27,28 @@ var NetworkRenewIPCharacteristic = function() {
   });
 };
 
-util.inherits(NetworkRenewIPCharacteristic, Characteristic);
+util.inherits(NetworkIPCharacteristic, Characteristic);
 
-NetworkRenewIPCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('NetworkRenewIPCharacteristic - onWriteRequest - data: ' + data.toString() + ' offset: ' + offset);
+NetworkIPCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('NetworkIPCharacteristic - onReadRequest');
+  var thisObj = this;
+  var cmd = "hostname -I";
+  //console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+     if (error) {
+       console.log('error code: "' + error + '"');
+       console.log(stderr);
+       callback(thisObj.RESULT_UNLIKELY_ERROR);
+     }
+     var ipaddr = stdout;
+     var buf = new Buffer(ipaddr, "utf-8");
+     callback(thisObj.RESULT_SUCCESS, buf);
+  });
+};
+
+
+NetworkIPCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('NetworkIPCharacteristic - onWriteRequest - data: ' + data.toString() + ' offset: ' + offset);
   var thisObj = this;
   var result = this.RESULT_SUCCESS;
 
@@ -65,4 +83,4 @@ NetworkRenewIPCharacteristic.prototype.onWriteRequest = function(data, offset, w
 
 };
 
-module.exports = NetworkRenewIPCharacteristic;
+module.exports = NetworkIPCharacteristic;

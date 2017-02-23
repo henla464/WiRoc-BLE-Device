@@ -7,7 +7,7 @@ var BlenoPrimaryService = bleno.PrimaryService;
 var NetworkListWifiCharacteristic = require('./network-list-wifi-characteristic');
 var NetworkConnectWifiCharacteristic = require('./network-connect-wifi-characteristic');
 var NetworkDisconnectWifiCharacteristic = require('./network-disconnect-wifi-characteristic');
-var NetworkRenewIPCharacteristic = require('./network-renew-ip-characteristic');
+var NetworkIPCharacteristic = require('./network-ip-characteristic');
 
 function NetworkService() {
 	NetworkService.super_.call(this, {
@@ -16,7 +16,7 @@ function NetworkService() {
           new NetworkListWifiCharacteristic(),
           new NetworkConnectWifiCharacteristic(),
           new NetworkDisconnectWifiCharacteristic(),
-          new NetworkRenewIPCharacteristic()
+          new NetworkIPCharacteristic()
       ]
   });
 }

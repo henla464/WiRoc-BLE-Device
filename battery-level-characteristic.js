@@ -1,3 +1,4 @@
+var exec = require('child_process').exec;
 var util = require('util');
 var bleno = require('bleno');
 
@@ -26,10 +27,19 @@ var BatteryLevelCharacteristic = function() {
 util.inherits(BatteryLevelCharacteristic, Characteristic);
 
 BatteryLevelCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  var percent = '100';
-  console.log('Battery level - onReadRequest: value (dec)= ' + percent);
-  percent = parseInt(percent, 10);
-  callback(this.RESULT_SUCCESS, new Buffer([percent]));
+  var thisObj = this;
+  child = exec("/usr/sbin/i2cget -f -y 0 0x34 0xb9", function (error, stdout, stderr) {
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+    if (error !== null) {
+      console.log('exec error: ' + error);
+      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+    } else {
+      var intPercent = parseInt(stdout.trim());
+      console.log('Battery level - onReadRequest: value (dec)=' + intPercent);
+      callback(thisObj.RESULT_SUCCESS, new Buffer([intPercent]));
+    }
+  })
 };
 
 module.exports = BatteryLevelCharacteristic;
