@@ -29,8 +29,8 @@ util.inherits(BatteryLevelCharacteristic, Characteristic);
 BatteryLevelCharacteristic.prototype.onReadRequest = function(offset, callback) {
   var thisObj = this;
   child = exec("/usr/sbin/i2cget -f -y 0 0x34 0xb9", function (error, stdout, stderr) {
-    console.log('stdout: ' + stdout);
-    console.log('stderr: ' + stderr);
+    //console.log('stdout: ' + stdout);
+    //console.log('stderr: ' + stderr);
     if (error !== null) {
       console.log('exec error: ' + error);
       callback(thisObj.RESULT_UNLIKELY_ERROR, null);

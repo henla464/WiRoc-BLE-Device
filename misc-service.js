@@ -4,15 +4,21 @@ var bleno = require('bleno');
 
 var BlenoPrimaryService = bleno.PrimaryService;
 
-var PunchesCharacteristic = require('./punches-characteristic');
-var DebugCharacteristic = require('./debug-characteristic');
+var MiscPunchesCharacteristic = require('./misc-punches-characteristic');
+var MiscDebugCharacteristic = require('./misc-debug-characteristic');
+var MiscStatusCharacteristic = require('./misc-status-characteristic');
+var MiscSettingsCharacteristic = require('./misc-settings-characteristic');
+var MiscServiceCharacteristic = require('./misc-service-characteristic');
 
 function MiscService() {
 	MiscService.super_.call(this, {
       uuid: 'FB880900-4AB2-40A2-A8F0-14CC1C2E5608',
       characteristics: [
-          new PunchesCharacteristic(),
-          new DebugCharacteristic()
+        new MiscPunchesCharacteristic(),
+	new MiscDebugCharacteristic(),
+	new MiscStatusCharacteristic(),
+	new MiscSettingsCharacteristic(),
+	new MiscServiceCharacteristic()
       ]
   });
 }

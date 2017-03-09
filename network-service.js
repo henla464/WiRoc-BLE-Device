@@ -10,7 +10,7 @@ var NetworkDisconnectWifiCharacteristic = require('./network-disconnect-wifi-cha
 var NetworkIPCharacteristic = require('./network-ip-characteristic');
 
 function NetworkService() {
-	NetworkService.super_.call(this, {
+  NetworkService.super_.call(this, {
       uuid: 'F5EA6200-BCC5-4406-A981-89C6C5FC09CF',
       characteristics: [
           new NetworkListWifiCharacteristic(),

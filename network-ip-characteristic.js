@@ -7,7 +7,7 @@ var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
 var NetworkIPCharacteristic = function() {
-  this.wifiConnectData = null;
+
 
   NetworkIPCharacteristic.super_.call(this, {
     uuid: 'F5EA6204-BCC5-4406-A981-89C6C5FC09CF',
@@ -16,7 +16,7 @@ var NetworkIPCharacteristic = function() {
       // User description
       new Descriptor({
         uuid: '2901',
-        value: 'Get the ip address or request a new DHCP ip address'
+        value: 'Get the ip address or req new DHCP ip address'
       }),
       // presentation format: 0x19=utf8, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
       new Descriptor({
@@ -25,6 +25,8 @@ var NetworkIPCharacteristic = function() {
       })
     ]
   });
+
+  ipAddress = null;
 };
 
 util.inherits(NetworkIPCharacteristic, Characteristic);
@@ -32,18 +34,28 @@ util.inherits(NetworkIPCharacteristic, Characteristic);
 NetworkIPCharacteristic.prototype.onReadRequest = function(offset, callback) {
   console.log('NetworkIPCharacteristic - onReadRequest');
   var thisObj = this;
-  var cmd = "hostname -I";
-  //console.log(cmd);
-  exec(cmd, function(error, stdout, stderr) {
-     if (error) {
-       console.log('error code: "' + error + '"');
-       console.log(stderr);
-       callback(thisObj.RESULT_UNLIKELY_ERROR);
-     }
-     var ipaddr = stdout;
-     var buf = new Buffer(ipaddr, "utf-8");
-     callback(thisObj.RESULT_SUCCESS, buf);
-  });
+  if (offset == 0) {
+    var cmd = "hostname -I";
+    //console.log(cmd);
+    exec(cmd, function(error, stdout, stderr) {
+      if (error) {
+        console.log('error code: "' + error + '"');
+        console.log(stderr);
+        callback(thisObj.RESULT_UNLIKELY_ERROR);
+      }
+      var ipaddr = stdout;
+      thisObj.ipAddress = new Buffer(ipaddr, "utf-8");
+      callback(thisObj.RESULT_SUCCESS, thisObj.ipAddress);
+    });
+  } else {
+    if (thisObj.ipAddress == null || offset > thisObj.ipAddress.length) {
+      result = this.RESULT_INVALID_OFFSET;
+      thisObj.ipAddress = null;
+    } else {
+      var buf = this.ipAddress.slice(offset);
+      callback(thisObj.RESULT_SUCCESS, buf);
+    }
+  }
 };
 
 

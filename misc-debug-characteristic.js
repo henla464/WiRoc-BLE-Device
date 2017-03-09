@@ -5,8 +5,8 @@ var bleno = require('bleno');
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
 
-var DebugCharacteristic = function() {
-	DebugCharacteristic.super_.call(this, {
+var MiscDebugCharacteristic = function() {
+	MiscDebugCharacteristic.super_.call(this, {
     uuid: 'FB880902-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['notify'],
     value: null,
@@ -30,35 +30,35 @@ var DebugCharacteristic = function() {
   this._counter = 0;
 };
 
-util.inherits(DebugCharacteristic, BlenoCharacteristic);
+util.inherits(MiscDebugCharacteristic, BlenoCharacteristic);
 
-DebugCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
-  console.log('DebugCharacteristic - onSubscribe');
+MiscDebugCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+  console.log('MiscDebugCharacteristic - onSubscribe');
 
   this._updateValueCallback = updateValueCallback;
   
   this._interval = setInterval(this.updatePunches.bind(this), 1000);
 };
 
-DebugCharacteristic.prototype.onUnsubscribe = function() {
-  console.log('DebugCharacteristic - onUnsubscribe');
+MiscDebugCharacteristic.prototype.onUnsubscribe = function() {
+  console.log('MiscDebugCharacteristic - onUnsubscribe');
   clearInterval(this._interval);
   this._updateValueCallback = null;
 };
 
-DebugCharacteristic.prototype.updatePunches = function() {
+MiscDebugCharacteristic.prototype.updatePunches = function() {
 	this._counter++;
-	console.log('DebugCharacteristic - updatePunches ' + this._counter);
+	console.log('MiscDebugCharacteristic - updatePunches ' + this._counter);
 	var buf = new Buffer('Dbg: ' + this._counter.toString());
 	this._updateValueCallback(buf);
 }
 
-DebugCharacteristic.prototype.disconnect = function(clientAddress) {
-	console.log('DebugCharacteristic - disconnect');
+MiscDebugCharacteristic.prototype.disconnect = function(clientAddress) {
+	console.log('MiscDebugCharacteristic - disconnect');
 	clearInterval(this._interval);
 	this._updateValueCallback = null;
 }
 
 
 
-module.exports = DebugCharacteristic;
+module.exports = MiscDebugCharacteristic;

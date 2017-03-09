@@ -2,11 +2,14 @@ var util = require('util');
 var bleno = require('bleno');
 var httphelper = require('./http-helper');
 
+
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
 var MeosIPCharacteristic = function() {
-	MeosIPCharacteristic.super_.call(this, {
+
+
+  MeosIPCharacteristic.super_.call(this, {
     uuid: '6E30B302-BE1B-401C-8A6D-1A59D5C23C64',
     properties: ['read', 'write'],
     descriptors: [
@@ -22,7 +25,6 @@ var MeosIPCharacteristic = function() {
       })
     ]
   });
-
  // this._ip = new Buffer([0x31,0x39,0x32,0x2E,0x31,0x36,0x38,0x2E,0x30,0x2E,0x32]); // 192.168.0.2
 };
 

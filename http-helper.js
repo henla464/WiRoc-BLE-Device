@@ -118,4 +118,32 @@ HttpHelper.setSendToMeosIPPort = function(port, callback) {
   });
 };
 
+HttpHelper.getStatus = function(callback) {
+  console.log('HttpHelper - getStatus');
+  HttpHelper.getHttpGetResponse('/misc/status/', function(status, body) {
+    callback(status, body == null ? null : body);
+  });
+};
+
+HttpHelper.getSettings = function(callback) {
+  console.log('HttpHelper - getSettings');
+  HttpHelper.getHttpGetResponse('/misc/settings/', function(status, body) {
+    callback(status, body == null ? null : body);
+  });
+};
+
+HttpHelper.setSetting = function(keyAndValue, callback) {
+  console.log('HttpHelper - setSetting');
+  HttpHelper.getHttpGetResponse('/misc/setting/' + keyAndValue + '/', function(status, body) {
+    callback(status, body == null ? null : body);
+  });
+};
+
+HttpHelper.getPunches = function(callback) {
+  console.log('HttpHelper - getPunches');
+  HttpHelper.getHttpGetResponse('/misc/punches/', function(status, body) {
+    callback(status, body == null ? null : body);
+  });
+};
+
 module.exports = HttpHelper;
