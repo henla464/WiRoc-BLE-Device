@@ -43,7 +43,7 @@ MiscServiceCharacteristic.prototype.onReadRequest = function(offset, callback) {
       var cmd = "systemctl is-active WiRocPythonWS.service";
       exec(cmd, function(error, stdout, stderr) {
         thisObj._statusServices.push({ Name: 'WiRocPythonWS', Status: stdout.trim('\n') });
-        var cmd = "systemctl is-active WiRocMonitor.service";
+        var cmd = "systemctl is-active blink.service";
         exec(cmd, function(error, stdout, stderr) {
            thisObj._statusServices.push({ Name: 'WiRocMonitor', Status: stdout.trim('\n') });
            jsonStr = JSON.stringify({ services: thisObj._statusServices });
