@@ -34,25 +34,13 @@ util.inherits(MiscStatusCharacteristic, Characteristic);
 MiscStatusCharacteristic.prototype.onReadRequest = function(offset, callback) {
   console.log('MiscStatusCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
-  //if (offset == 0) {
-  //  httphelper.getStatus(function (status, statusMsg) {
-  //    console.log('MiscStatusCharacteristic - onReadRequest: status = "' + status + '" value = ' + (statusMsg != null ? statusMsg : 'null'));
-  //    thisObj.statusMsg = new Buffer(statusMsg, "utf-8");
-  //    if (status == 'OK') {
-  //      callback(thisObj.RESULT_SUCCESS, thisObj.statusMsg);
-  //    } else {
-  //      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
-  //    }
-  //  });
-  //} else {
-    if (thisObj.statusMsg == null || offset > thisObj.statusMsg.length) {
-      result = this.RESULT_INVALID_OFFSET;
-      thisObj.statusMsg = null;
-    } else {
-      var buf = this.statusMsg.slice(offset);
-      callback(thisObj.RESULT_SUCCESS, buf);
-    }
-  //}
+  if (thisObj.statusMsg == null || offset > thisObj.statusMsg.length) {
+    result = this.RESULT_INVALID_OFFSET;
+    thisObj.statusMsg = null;
+  } else {
+    var buf = this.statusMsg.slice(offset);
+    callback(thisObj.RESULT_SUCCESS, buf);
+  }
 };
 
 
