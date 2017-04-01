@@ -146,4 +146,13 @@ HttpHelper.getPunches = function(callback) {
   });
 };
 
+HttpHelper.getWiRocDeviceName = function(callback) {
+  console.log('HttpHelper - getWiRocDeviceName');
+  HttpHelper.getHttpGetResponse('/misc/wirocdevicename/', function(status, body) {
+ console.log('HttpHelper - getWiRocDeviceName: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).WiRocDeviceName);
+  });
+};
+
+
 module.exports = HttpHelper;
