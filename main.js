@@ -16,21 +16,23 @@ var networkService = new NetworkService();
 
 console.log('bleno - echo');
 
+
 bleno.on('stateChange', function(state) {
   console.log('on -> stateChange: ' + state);
 
   if (state === 'poweredOn') {
-    httphelper.getWiRocDeviceName(function (status, deviceName) {
-      console.log('WiRocDeviceName: ' + (deviceName != null ? deviceName : 'null') + ' Status: ' + status);
-      if (deviceName == null) {
-         deviceName = 'WiRoc Device';
-      }
-      bleno.startAdvertising(deviceName, [batteryService.uuid, radioConfigurationService.uuid]);
-    });
+    setTimeout(function() {  
+       httphelper.getWiRocDeviceName(function (status, deviceName) {
+         console.log('WiRocDeviceName: ' + (deviceName != null ? deviceName : 'null') + ' Status: ' + status);
+         if (deviceName == null) {
+            deviceName = 'WiRoc Device';
+         }
+         bleno.startAdvertising(deviceName, [batteryService.uuid, radioConfigurationService.uuid]);
+       });
+      }, 7000);
   } else {
     bleno.stopAdvertising();
   }
-
 });
 
 bleno.on('advertisingStart', function(error) {
