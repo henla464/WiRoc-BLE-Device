@@ -9,6 +9,7 @@ var MiscDebugCharacteristic = require('./misc-debug-characteristic');
 var MiscStatusCharacteristic = require('./misc-status-characteristic');
 var MiscSettingsCharacteristic = require('./misc-settings-characteristic');
 var MiscServiceCharacteristic = require('./misc-service-characteristic');
+var MiscDatabaseCharacteristic = require('./misc-database-characteristic');
 
 function MiscService() {
 	MiscService.super_.call(this, {
@@ -18,7 +19,8 @@ function MiscService() {
 	new MiscDebugCharacteristic(),
 	new MiscStatusCharacteristic(),
 	new MiscSettingsCharacteristic(),
-	new MiscServiceCharacteristic()
+	new MiscServiceCharacteristic(),
+	new MiscDatabaseCharacteristic()
       ]
   });
 }

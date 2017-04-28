@@ -149,8 +149,24 @@ HttpHelper.getPunches = function(callback) {
 HttpHelper.getWiRocDeviceName = function(callback) {
   console.log('HttpHelper - getWiRocDeviceName');
   HttpHelper.getHttpGetResponse('/misc/wirocdevicename/', function(status, body) {
- console.log('HttpHelper - getWiRocDeviceName: ' + body);
+    console.log('HttpHelper - getWiRocDeviceName: ' + body);
     callback(status, body == null ? null : JSON.parse(body).WiRocDeviceName);
+  });
+};
+
+HttpHelper.deletePunches = function(callback) {
+  console.log('HttpHelper - deletePunches');
+  HttpHelper.getHttpGetResponse('/misc/database/deletepunches/', function(status, body) {
+    console.log('HttpHelper - deletePunches: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).Status);
+  });
+};
+
+HttpHelper.dropTables = function(callback) {
+  console.log('HttpHelper - dropTables');
+  HttpHelper.getHttpGetResponse('/misc/database/droptables/', function(status, body) {
+    console.log('HttpHelper - dropTables: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).Status);
   });
 };
 
