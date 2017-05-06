@@ -29,7 +29,7 @@ bleno.on('stateChange', function(state) {
          }
          bleno.startAdvertising(deviceName, [batteryService.uuid, radioConfigurationService.uuid]);
        });
-      }, 7000);
+      }, 15000);
   } else {
     bleno.stopAdvertising();
   }

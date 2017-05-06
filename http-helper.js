@@ -162,10 +162,10 @@ HttpHelper.deletePunches = function(callback) {
   });
 };
 
-HttpHelper.dropTables = function(callback) {
-  console.log('HttpHelper - dropTables');
-  HttpHelper.getHttpGetResponse('/misc/database/droptables/', function(status, body) {
-    console.log('HttpHelper - dropTables: ' + body);
+HttpHelper.dropAllTables = function(callback) {
+  console.log('HttpHelper - dropAllTables');
+  HttpHelper.getHttpGetResponse('/misc/database/dropalltables/', function(status, body) {
+    console.log('HttpHelper - dropAllTables: ' + body);
     callback(status, body == null ? null : JSON.parse(body).Status);
   });
 };

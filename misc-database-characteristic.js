@@ -45,35 +45,36 @@ MiscDatabaseCharacteristic.prototype.onWriteRequest = function(data, offset, wit
         callback(thisObj.RESULT_UNLIKELY_ERROR);
       }
     });
-  } else if (operation == "droptables") {
+  } else if (operation == "dropalltables") {
     // stop WiRoc-Python service
     child = exec("systemctl stop WiRocPython.service", function (error, stdout, stderr) {
       if (error !== null) {
         console.log('exec error: ' + error);
         callback(thisObj.RESULT_UNLIKELY_ERROR);
       } else {
-        httphelper.dropTables(function(status, retWebServiceStatus) {
-          console.log('MiscDatabaseCharacteristic - onWriteRequest, drop tables: status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
-          if (status == 'OK' && retWebServiceStatus == 'OK') {
-            // start WiRoc-Python service
-            child2 = exec("systemctl start WiRocPython.service", function (error, stdout, stderr) {
-              if (error !== null) {
-                callback(thisObj.RESULT_SUCCESS);
+            httphelper.dropAllTables(function(status, retWebServiceStatus) {
+              console.log('MiscDatabaseCharacteristic - onWriteRequest, drop tables: status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
+              if (status == 'OK' && retWebServiceStatus == 'OK') {
+                // start WiRoc-Python service
+                child2 = exec("systemctl start WiRocPython.service", function (error, stdout, stderr) {
+                  if (error !== null) {
+                    callback(thisObj.RESULT_UNLIKELY_ERROR);
+                  } else {
+                    callback(thisObj.RESULT_SUCCESS);
+                  }
+                });
               } else {
-                callback(thisObj.RESULT_UNLIKELY_ERROR);
+                // start WiRoc-Python service
+                child2 = exec("systemctl start WiRocPython.service", function (error, stdout, stderr) {
+                  callback(thisObj.RESULT_UNLIKELY_ERROR);
+                });
               }
             });
-          } else {
-            // start WiRoc-Python service
-            child2 = exec("systemctl start WiRocPython.service", function (error, stdout, stderr) {
-                callback(thisObj.RESULT_UNLIKELY_ERROR);
-            });
-          }
-        });
       }
     });
+  } else {
+    callback(thisObj.RESULT_UNLIKELY_ERROR);
   }
-  callback(thisObj.RESULT_UNLIKELY_ERROR);
 };
 
 module.exports = MiscDatabaseCharacteristic;
