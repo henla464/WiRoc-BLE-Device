@@ -35,7 +35,7 @@ NetworkDisonnectWifiCharacteristic.prototype.onWriteRequest = function(data, off
  
   var hostname = os.hostname();
   var wlanIFace = 'wlan0';
-  if (hostname.toLowerCase != 'chip') {
+  if (hostname.toLowerCase() != 'chip') {
     wlanIFace = 'wlp2s0';
   }
   
