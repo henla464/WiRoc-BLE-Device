@@ -170,5 +170,22 @@ HttpHelper.dropAllTables = function(callback) {
   });
 };
 
+HttpHelper.getTestPunches = function(testBatchGuid, includeAll, callback) {
+  console.log('HttpHelper - getTestPunches');
+  HttpHelper.getHttpGetResponse('/misc/testpunches/gettestpunches/' + testBatchGuid + '/' + (includeAll ? "true":"false") + '/', function(status, body) {
+    console.log('HttpHelper - getTestPunches: ' + body);
+    callback(status, body == null ? null : body);
+  });
+};
+
+HttpHelper.addTestPunch = function(testBatchGuid, siNo, ackReq, callback) {
+  console.log('HttpHelper - addTestPunch');
+  HttpHelper.getHttpGetResponse('/misc/testpunches/addtestpunch/' + testBatchGuid + '/' + siNo + '/' + ackReq + '/', function(status, body) {
+    console.log('HttpHelper - addTestPunch: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).Status);
+  });
+};
+
+
 
 module.exports = HttpHelper;
