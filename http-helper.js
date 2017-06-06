@@ -13,6 +13,7 @@ HttpHelper.getHttpGetResponse = function(thePath, callback) {
       console.log(response.statusCode);
       console.log("for url:");
       console.log(thePath);
+      callback('CONNECTION ERROR', null);
       return;
     }
     // Continuously update stream with data
