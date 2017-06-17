@@ -41,7 +41,6 @@ var MiscTestPunchesCharacteristic = function() {
   this._siNo = "123456789";
   this._punchesBuf = null;
   this._shouldStopSending = false;
-  this._ackReq = false;
 };
 
 util.inherits(MiscTestPunchesCharacteristic, BlenoCharacteristic);
@@ -51,7 +50,7 @@ MiscTestPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, upd
   this._maxValue = Math.min(20, maxValueSize);
   this._updateValueCallback = updateValueCallback;
   this._interval = setInterval(this.updatePunches.bind(this), 3000);
-  this._sendSingleFragmentInterval = setInterval(this.singleUpdatePunchesCall.bind(this), 200);
+  this._sendSingleFragmentInterval = setInterval(this.singleUpdatePunchesCall.bind(this), 250);
 };
 
 MiscTestPunchesCharacteristic.prototype.onUnsubscribe = function() {
@@ -75,11 +74,11 @@ MiscTestPunchesCharacteristic.prototype.singleUpdatePunchesCall = function() {
 			console.log("punches fragment: (space)");
 			this._updateValueCallback(tmpBuf2);
 		}
-		this._punchesBuf = null;
 		if (this._shouldStopSending) {
 			clearInterval(this._sendSingleFragmentInterval);
 			this._sendSingleFragmentInterval = null;
 		}
+		this._punchesBuf = null;
 	}
 }
 
@@ -87,21 +86,23 @@ MiscTestPunchesCharacteristic.prototype.updatePunches = function() {
     console.log('MiscTestPunchesCharacteristic - updatePunches');
     var includeAll = false;
     var thisObj = this;
-    httphelper.getTestPunches(thisObj._testBatchGuid, includeAll, function (status, punches) {
-      console.log('MiscTestPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
-      if (status == 'OK') {
-	if (thisObj._updateValueCallback != null && thisObj._punchesBuf == null) {  // check that we should send, and that previous data has been sent
-		tmpPunchesBuf =  new Buffer(punches, "utf-8");
-		if (tmpPunchesBuf.length < 20) {
-			console.log("updatePunches 2");
-			return; // no test punches to return, too short
-		}
-		thisObj._punchesBuf = tmpPunchesBuf;
-	}
-      } else {
-        console.log('Error status != OK');
-      }
-    });
+    if (thisObj._punchesBuf == null) {
+       	httphelper.getTestPunches(thisObj._testBatchGuid, includeAll, function (status, punches) {
+       		console.log('MiscTestPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
+      		if (status == 'OK') {
+			if (thisObj._updateValueCallback != null && thisObj._punchesBuf == null) {  // check that we should send, and that previous data has been sent
+				tmpPunchesBuf =  new Buffer(punches, "utf-8");
+				if (tmpPunchesBuf.length < 20) {
+					console.log("updatePunches 2");
+					return; // no test punches to return, too short
+				}
+				thisObj._punchesBuf = tmpPunchesBuf;
+			}
+		} else {
+			console.log('Error status != OK');
+      		}
+    	});
+    }
 }
 
 MiscTestPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
@@ -149,7 +150,7 @@ MiscTestPunchesCharacteristic.prototype.getNewGuid = function() {
 MiscTestPunchesCharacteristic.prototype.addTestPunch = function(callback) {
   // add punch
   console.log("addTestPunch");
-  httphelper.addTestPunch(this._testBatchGuid, this._siNo, this._ackReq, function (status, addedPunch) {
+  httphelper.addTestPunch(this._testBatchGuid, this._siNo, function (status, addedPunch) {
     console.log('MiscTestPunchesCharacteristic - addTestPunch: status = "' + status + '" value = ' + (addedPunch != null ? addedPunch : 'null'));
   });
 
@@ -173,10 +174,7 @@ MiscTestPunchesCharacteristic.prototype.onWriteRequest = function(data, offset, 
   if (noOfPunchesAndIntervalAndSINo.split(';').length > 2) {
     this._siNo = noOfPunchesAndIntervalAndSINo.split(';')[2];
   }
-  if (noOfPunchesAndIntervalAndSINo.split(';').length > 3) {
-    this._ackReq = noOfPunchesAndIntervalAndSINo.split(';')[3];
-  }
-  console.log("Number of punches to add: " + this._noOfPunchesToAdd + " interval: " + intervalMs + " si number: " + this._siNo + " ackReq: " +   this._ackReq);
+  console.log("Number of punches to add: " + this._noOfPunchesToAdd + " interval: " + intervalMs + " si number: " + this._siNo);
   this._testBatchGuid = this.getNewGuid();
   this._shouldStopSending = false;
   clearInterval(this._interval);

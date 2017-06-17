@@ -179,9 +179,9 @@ HttpHelper.getTestPunches = function(testBatchGuid, includeAll, callback) {
   });
 };
 
-HttpHelper.addTestPunch = function(testBatchGuid, siNo, ackReq, callback) {
+HttpHelper.addTestPunch = function(testBatchGuid, siNo, callback) {
   console.log('HttpHelper - addTestPunch');
-  HttpHelper.getHttpGetResponse('/misc/testpunches/addtestpunch/' + testBatchGuid + '/' + siNo + '/' + ackReq + '/', function(status, body) {
+  HttpHelper.getHttpGetResponse('/misc/testpunches/addtestpunch/' + testBatchGuid + '/' + siNo + '/', function(status, body) {
     console.log('HttpHelper - addTestPunch: ' + body);
     callback(status, body == null ? null : JSON.parse(body).Status);
   });
