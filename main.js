@@ -29,7 +29,7 @@ bleno.on('stateChange', function(state) {
          }
          bleno.startAdvertising(deviceName, [batteryService.uuid, radioConfigurationService.uuid]);
        });
-      }, 15000);
+      }, 1000);
   } else {
     bleno.stopAdvertising();
   }
@@ -50,6 +50,10 @@ bleno.on('advertisingStart', function(error) {
       }
     );
   }
+});
+
+bleno.on('advertisingStop', function() {
+  console.log('on -> advertisingStop');
 });
 
 
