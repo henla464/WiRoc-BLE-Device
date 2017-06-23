@@ -187,6 +187,14 @@ HttpHelper.addTestPunch = function(testBatchGuid, siNo, callback) {
   });
 };
 
+HttpHelper.getIsCharging = function(callback) {
+  console.log('HttpHelper - getIsCharging');
+  HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
+    console.log('HttpHelper - getIsCharging: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).IsCharging);
+  });
+};
+
 
 
 module.exports = HttpHelper;

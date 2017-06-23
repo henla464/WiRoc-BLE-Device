@@ -1,6 +1,7 @@
 var exec = require('child_process').exec;
 var util = require('util');
 var bleno = require('bleno');
+var os = require("os");
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
@@ -28,18 +29,23 @@ util.inherits(BatteryLevelCharacteristic, Characteristic);
 
 BatteryLevelCharacteristic.prototype.onReadRequest = function(offset, callback) {
   var thisObj = this;
-  child = exec("/usr/sbin/i2cget -f -y 0 0x34 0xb9", function (error, stdout, stderr) {
-    //console.log('stdout: ' + stdout);
-    //console.log('stderr: ' + stderr);
-    if (error !== null) {
-      console.log('exec error: ' + error);
-      callback(thisObj.RESULT_UNLIKELY_ERROR, null);
-    } else {
-      var intPercent = parseInt(stdout.trim());
-      console.log('Battery level - onReadRequest: value (dec)=' + intPercent);
-      callback(thisObj.RESULT_SUCCESS, new Buffer([intPercent]));
-    }
-  })
+  var hostname = os.hostname();
+  if (hostname == "chip") {
+    child = exec("/usr/sbin/i2cget -f -y 0 0x34 0xb9", function (error, stdout, stderr) {
+      //console.log('stdout: ' + stdout);
+      //console.log('stderr: ' + stderr);
+      if (error !== null) {
+        console.log('exec error: ' + error);
+        callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+      } else {
+        var intPercent = parseInt(stdout.trim());
+        console.log('Battery level - onReadRequest: value (dec)=' + intPercent);
+        callback(thisObj.RESULT_SUCCESS, new Buffer([intPercent]));
+      }
+    });
+  } else { 
+     callback(thisObj.RESULT_SUCCESS, new Buffer([75]));
+  }
 };
 
 module.exports = BatteryLevelCharacteristic;
