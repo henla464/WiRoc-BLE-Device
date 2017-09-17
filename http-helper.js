@@ -135,7 +135,7 @@ HttpHelper.getSettings = function(callback) {
 
 HttpHelper.setSetting = function(keyAndValue, callback) {
   console.log('HttpHelper - setSetting');
-  HttpHelper.getHttpGetResponse('/misc/setting/' + keyAndValue + '/', function(status, body) {
+  HttpHelper.getHttpGetResponse('/misc/setting/' + encodeURIComponent(keyAndValue) + '/', function(status, body) {
     callback(status, body == null ? null : body);
   });
 };
