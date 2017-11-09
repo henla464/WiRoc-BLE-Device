@@ -1,4 +1,5 @@
 var http = require('http');
+var helper = require('./helper');
 
 var HttpHelper = HttpHelper || {}
 
@@ -198,32 +199,44 @@ HttpHelper.getIsCharging = function(callback) {
 HttpHelper.getAll = function(callback) {
   console.log('HttpHelper - getAll');
   HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
+    if (status != 'OK') { callback(status, null); }
     var isCharging = (body == null ? null : JSON.parse(body).IsCharging);
     HttpHelper.getHttpGetResponse('/misc/wirocdevicename/', function(status, body) {
+      if (status != 'OK') { callback(status, null); }
       var wirocDeviceName = (body == null ? null : JSON.parse(body).WiRocDeviceName);
       HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosipport/', function(status, body) {
+        if (status != 'OK') { callback(status, null); }
         var sentToMeosIPPort = (body == null ? null : JSON.parse(body).SendToMeosIPPort);
         HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosip/', function(status, body) {
+          if (status != 'OK') { callback(status, null); }
           var sendToMeosIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
           HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosenabled/', function(status, body) {
+            if (status != 'OK') { callback(status, null); }
             var sentToMeosEnabled = (body == null ? null : JSON.parse(body).SendToMeosEnabled);
             HttpHelper.getHttpGetResponse('/radioconfiguration/acknowledgementrequested/', function(status, body) {
+              if (status != 'OK') { callback(status, null); }
               var acknowledgementRequested = (body == null ? null : JSON.parse(body).AcknowledgementRequested);
               HttpHelper.getHttpGetResponse('/radioconfiguration/datarate/', function(status, body) {
+                if (status != 'OK') { callback(status, null); }
                 var dataRate = (body == null ? null : JSON.parse(body).DataRate);
                 HttpHelper.getHttpGetResponse('/radioconfiguration/channel/', function(status, body) {
+                  if (status != 'OK') { callback(status, null); }
                   var channel = (body == null ? null : JSON.parse(body).Channel);
-                  var properties = {};
-                  properties['isCharging'] = isCharging;
-                  properties['wirocDeviceName'] = wirocDeviceName;
-                  properties['sentToMeosIPPort'] = sentToMeosIPPort;
-                  properties['sendToMeosIP'] = sendToMeosIP;
-                  properties['sentToMeosEnabled'] = sentToMeosEnabled;
-                  properties['acknowledgementRequested'] = acknowledgementRequested;
-                  properties['dataRate'] = dataRate;
-                  properties['channel'] = channel;
-                  jsonPropertiesString = JSON.stringify(properties); 
-                  callback(status, jsonPropertiesString);
+                  helper.getBatteryLevel(function(status, intPercent) {
+                    if (status != 'OK') { callback(status, null); }
+                    var properties = {};
+                    properties['isCharg'] = isCharging;
+                    properties['devName'] = wirocDeviceName == null ? '' : wirocDeviceName;
+                    properties['ipPort'] = sentToMeosIPPort;
+                    properties['ip'] = sendToMeosIP == null ? '' : sendToMeosIP;
+                    properties['meosEn'] = sentToMeosEnabled;
+                    properties['ackReq'] = acknowledgementRequested;
+                    properties['dataRate'] = dataRate;
+                    properties['ch'] = channel;
+                    properties['battLvl'] = intPercent;
+                    jsonPropertiesString = JSON.stringify(properties); 
+                    callback(status, jsonPropertiesString);
+                  };
                 });
               });
             });
