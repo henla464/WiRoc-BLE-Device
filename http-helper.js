@@ -195,6 +195,44 @@ HttpHelper.getIsCharging = function(callback) {
   });
 };
 
+HttpHelper.getAll = function(callback) {
+  console.log('HttpHelper - getAll');
+  HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
+    var isCharging = (body == null ? null : JSON.parse(body).IsCharging);
+    HttpHelper.getHttpGetResponse('/misc/wirocdevicename/', function(status, body) {
+      var wirocDeviceName = (body == null ? null : JSON.parse(body).WiRocDeviceName);
+      HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosipport/', function(status, body) {
+        var sentToMeosIPPort = (body == null ? null : JSON.parse(body).SendToMeosIPPort);
+        HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosip/', function(status, body) {
+          var sendToMeosIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
+          HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosenabled/', function(status, body) {
+            var sentToMeosEnabled = (body == null ? null : JSON.parse(body).SendToMeosEnabled);
+            HttpHelper.getHttpGetResponse('/radioconfiguration/acknowledgementrequested/', function(status, body) {
+              var acknowledgementRequested = (body == null ? null : JSON.parse(body).AcknowledgementRequested);
+              HttpHelper.getHttpGetResponse('/radioconfiguration/datarate/', function(status, body) {
+                var dataRate = (body == null ? null : JSON.parse(body).DataRate);
+                HttpHelper.getHttpGetResponse('/radioconfiguration/channel/', function(status, body) {
+                  var channel = (body == null ? null : JSON.parse(body).Channel);
+                  var properties = {};
+                  properties['isCharging'] = isCharging;
+                  properties['wirocDeviceName'] = wirocDeviceName;
+                  properties['sentToMeosIPPort'] = sentToMeosIPPort;
+                  properties['sendToMeosIP'] = sendToMeosIP;
+                  properties['sentToMeosEnabled'] = sentToMeosEnabled;
+                  properties['acknowledgementRequested'] = acknowledgementRequested;
+                  properties['dataRate'] = dataRate;
+                  properties['channel'] = channel;
+                  jsonPropertiesString = JSON.stringify(properties); 
+                  callback(status, jsonPropertiesString);
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+};
 
 
 module.exports = HttpHelper;
