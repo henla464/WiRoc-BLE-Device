@@ -236,7 +236,7 @@ HttpHelper.getAll = function(callback) {
                     properties['battLvl'] = intPercent;
                     jsonPropertiesString = JSON.stringify(properties); 
                     callback(status, jsonPropertiesString);
-                  };
+                  });
                 });
               });
             });

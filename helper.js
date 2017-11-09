@@ -24,3 +24,5 @@ Helper.getBatteryLevel = function(callback) {
   }
 
 };
+
+module.exports = Helper;
