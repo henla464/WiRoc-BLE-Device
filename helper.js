@@ -25,4 +25,18 @@ Helper.getBatteryLevel = function(callback) {
 
 };
 
+
+Helper.getIP = function(callback) {
+  var cmd = "hostname -I";
+  //console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+    if (error) {
+      console.log('error code: "' + error + '"');
+      console.log(stderr);
+      callback('ERROR');
+    }
+    callback('OK', stdout);
+  });
+};
+
 module.exports = Helper;

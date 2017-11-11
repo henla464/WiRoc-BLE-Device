@@ -199,43 +199,48 @@ HttpHelper.getIsCharging = function(callback) {
 HttpHelper.getAll = function(callback) {
   console.log('HttpHelper - getAll');
   HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
-    if (status != 'OK') { callback(status, null); }
+    if (status != 'OK') { callback(status, null); return;}
     var isCharging = (body == null ? null : JSON.parse(body).IsCharging);
     HttpHelper.getHttpGetResponse('/misc/wirocdevicename/', function(status, body) {
-      if (status != 'OK') { callback(status, null); }
+      if (status != 'OK') { callback(status, null); return;}
       var wirocDeviceName = (body == null ? null : JSON.parse(body).WiRocDeviceName);
       HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosipport/', function(status, body) {
-        if (status != 'OK') { callback(status, null); }
-        var sentToMeosIPPort = (body == null ? null : JSON.parse(body).SendToMeosIPPort);
+        if (status != 'OK') { callback(status, null); return;}
+        var sentToSirapIPPort = (body == null ? null : JSON.parse(body).SendToMeosIPPort);
         HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosip/', function(status, body) {
-          if (status != 'OK') { callback(status, null); }
-          var sendToMeosIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
+          if (status != 'OK') { callback(status, null); return;}
+          var sendToSirapIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
           HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosenabled/', function(status, body) {
-            if (status != 'OK') { callback(status, null); }
-            var sentToMeosEnabled = (body == null ? null : JSON.parse(body).SendToMeosEnabled);
+            if (status != 'OK') { callback(status, null); return;}
+            var sentToMeosEnabled = (body == null ? null : JSON.parse(body).SendToSirapEnabled);
             HttpHelper.getHttpGetResponse('/radioconfiguration/acknowledgementrequested/', function(status, body) {
-              if (status != 'OK') { callback(status, null); }
+              if (status != 'OK') { callback(status, null); return;}
               var acknowledgementRequested = (body == null ? null : JSON.parse(body).AcknowledgementRequested);
               HttpHelper.getHttpGetResponse('/radioconfiguration/datarate/', function(status, body) {
-                if (status != 'OK') { callback(status, null); }
+                if (status != 'OK') { callback(status, null); return;}
                 var dataRate = (body == null ? null : JSON.parse(body).DataRate);
                 HttpHelper.getHttpGetResponse('/radioconfiguration/channel/', function(status, body) {
-                  if (status != 'OK') { callback(status, null); }
+                  if (status != 'OK') { callback(status, null); return;}
                   var channel = (body == null ? null : JSON.parse(body).Channel);
                   helper.getBatteryLevel(function(status, intPercent) {
-                    if (status != 'OK') { callback(status, null); }
-                    var properties = {};
-                    properties['isCharg'] = isCharging;
-                    properties['devName'] = wirocDeviceName == null ? '' : wirocDeviceName;
-                    properties['ipPort'] = sentToMeosIPPort;
-                    properties['ip'] = sendToMeosIP == null ? '' : sendToMeosIP;
-                    properties['meosEn'] = sentToMeosEnabled;
-                    properties['ackReq'] = acknowledgementRequested;
-                    properties['dataRate'] = dataRate;
-                    properties['ch'] = channel;
-                    properties['battLvl'] = intPercent;
-                    jsonPropertiesString = JSON.stringify(properties); 
-                    callback(status, jsonPropertiesString);
+                    if (status != 'OK') { callback(status, null); return;}
+                    Helper.getIP(function(status, data) {
+                      if (status != 'OK') { callback(status, data); return;}
+                      var ipAddress = data;
+                      var properties = {};
+                      properties['isCharg'] = isCharging;
+                      properties['devName'] = wirocDeviceName == null ? '' : wirocDeviceName;
+                      properties['sirapIPPort'] = sentToSirapIPPort;
+                      properties['sirapIP'] = sendToSirapIP == null ? '' : sendToSirapIP;
+                      properties['sirapEn'] = sentToSirapEnabled;
+                      properties['ackReq'] = acknowledgementRequested;
+                      properties['dataRate'] = dataRate;
+                      properties['ch'] = channel;
+                      properties['battLvl'] = intPercent;
+                      properties['ip'] = ipAddress;
+                      jsonPropertiesString = JSON.stringify(properties); 
+                      callback(status, jsonPropertiesString);
+                    });
                   });
                 });
               });

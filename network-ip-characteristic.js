@@ -35,19 +35,15 @@ NetworkIPCharacteristic.prototype.onReadRequest = function(offset, callback) {
   console.log('NetworkIPCharacteristic - onReadRequest');
   var thisObj = this;
   if (offset == 0) {
-    var cmd = "hostname -I";
-    //console.log(cmd);
-    exec(cmd, function(error, stdout, stderr) {
-      if (error) {
-        console.log('error code: "' + error + '"');
-        console.log(stderr);
+    Helper.getIP(function(code, data) {
+      if (code != 'OK') {
         callback(thisObj.RESULT_UNLIKELY_ERROR);
+        return;
       }
-      var ipaddr = stdout;
-      thisObj.ipAddress = new Buffer(ipaddr, "utf-8");
+      thisObj.ipAddress = new Buffer(data, "utf-8");
       callback(thisObj.RESULT_SUCCESS, thisObj.ipAddress);
     });
-  } else {
+ } else {
     if (thisObj.ipAddress == null || offset > thisObj.ipAddress.length) {
       result = this.RESULT_INVALID_OFFSET;
       thisObj.ipAddress = null;
