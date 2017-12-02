@@ -212,7 +212,7 @@ HttpHelper.getAll = function(callback) {
           var sendToSirapIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
           HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosenabled/', function(status, body) {
             if (status != 'OK') { callback(status, null); return;}
-            var sentToMeosEnabled = (body == null ? null : JSON.parse(body).SendToSirapEnabled);
+            var sentToSirapEnabled = (body == null ? null : JSON.parse(body).SendToMeosEnabled);
             HttpHelper.getHttpGetResponse('/radioconfiguration/acknowledgementrequested/', function(status, body) {
               if (status != 'OK') { callback(status, null); return;}
               var acknowledgementRequested = (body == null ? null : JSON.parse(body).AcknowledgementRequested);
@@ -224,7 +224,7 @@ HttpHelper.getAll = function(callback) {
                   var channel = (body == null ? null : JSON.parse(body).Channel);
                   helper.getBatteryLevel(function(status, intPercent) {
                     if (status != 'OK') { callback(status, null); return;}
-                    Helper.getIP(function(status, data) {
+                    helper.getIP(function(status, data) {
                       if (status != 'OK') { callback(status, data); return;}
                       var ipAddress = data;
                       var properties = {};

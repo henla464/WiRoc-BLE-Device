@@ -36,7 +36,7 @@ MiscDeviceNameCharacteristic.prototype.onReadRequest = function(offset, callback
   var thisObj = this;
   if (offset == 0) {
     httphelper.getWiRocDeviceName(function (status, deviceName) {
-      console.log('MiscDeviceNameCharacteristic - onReadRequest: status = "' + status + '" value = ' + (settings != null ? settings : 'null'));
+      console.log('MiscDeviceNameCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
       thisObj.deviceName = new Buffer(deviceName, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj.deviceName);

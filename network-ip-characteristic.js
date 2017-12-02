@@ -1,6 +1,7 @@
 var util = require('util');
 var bleno = require('bleno');
 var httphelper = require('./http-helper');
+var helper = require('./helper');
 var exec = require('child_process').exec;
 
 var Descriptor = bleno.Descriptor;
@@ -35,7 +36,7 @@ NetworkIPCharacteristic.prototype.onReadRequest = function(offset, callback) {
   console.log('NetworkIPCharacteristic - onReadRequest');
   var thisObj = this;
   if (offset == 0) {
-    Helper.getIP(function(code, data) {
+    helper.getIP(function(code, data) {
       if (code != 'OK') {
         callback(thisObj.RESULT_UNLIKELY_ERROR);
         return;
