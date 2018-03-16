@@ -14,7 +14,7 @@ var MiscTestPunchesCharacteristic = require('./misc-test-punches-characteristic'
 var MiscBatteryCharacteristic = require('./misc-battery-characteristic');
 var MiscAllCharacteristic = require('./misc-all-characteristic');
 var MiscDeviceNameCharacteristic = require('./misc-devicename-characteristic');
-var MiscDeviceNameCharacteristic = require('./misc-logarchives-characteristic');
+var MiscLogArchivesCharacteristic = require('./misc-logarchives-characteristic');
 
 function MiscService() {
 	MiscService.super_.call(this, {

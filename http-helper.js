@@ -214,8 +214,6 @@ HttpHelper.getWebServerUrl = function(callback) {
 };
 
 
-/misc/apikey/
-
 HttpHelper.getAll = function(callback) {
   console.log('HttpHelper - getAll');
   HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {

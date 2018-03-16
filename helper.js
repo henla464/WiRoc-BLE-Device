@@ -52,7 +52,7 @@ Helper.getBTAddress = function(callback) {
       stdout = stdout.trim();
       var btAddress = "NoBTAddress";
       var stdoutWords = stdout.split(" ");
-      if (stdoutWords.length > 1 and stdoutWords[1].length == 17) {
+      if (stdoutWords.length > 1 && stdoutWords[1].length == 17) {
          btAddress = stdoutWords[1]
       }
       callback('OK', btAddress);
