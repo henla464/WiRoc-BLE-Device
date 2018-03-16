@@ -196,6 +196,26 @@ HttpHelper.getIsCharging = function(callback) {
   });
 };
 
+HttpHelper.getApiKey = function(callback) {
+  console.log('HttpHelper - getApiKey');
+  HttpHelper.getHttpGetResponse('/misc/apikey/', function(status, body) {
+    console.log('HttpHelper - getApiKey: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).ApiKey);
+  });
+};
+
+
+HttpHelper.getWebServerUrl = function(callback) {
+  console.log('HttpHelper - getWebServerUrl');
+  HttpHelper.getHttpGetResponse('/misc/webserverurl/', function(status, body) {
+    console.log('HttpHelper - getWebServerUrl: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).WebServerUrl);
+  });
+};
+
+
+/misc/apikey/
+
 HttpHelper.getAll = function(callback) {
   console.log('HttpHelper - getAll');
   HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
