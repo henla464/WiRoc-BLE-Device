@@ -36,7 +36,7 @@ MiscLogArchivesCharacteristic.prototype.onWriteRequest = function(data, offset, 
 
   helper.getBTAddress(function(status, btAddress) {
     if (status == 'OK') {
-      var dateNow = Date.now();
+      var dateNow = new Date();
       var zipFilePath = helper.getZipFilePath(btAddress, dateNow);
       helper.zipLogArchive(zipFilePath, function(status2) {
         if (status2 == 'OK') {
@@ -44,11 +44,17 @@ MiscLogArchivesCharacteristic.prototype.onWriteRequest = function(data, offset, 
             if (status3 == 'OK') {
               httphelper.getWebServerUrl(function(status4, serverUrl) {
                 if (status4 == 'OK') {
-                  helper.uploadLogArchive(apiKey, zipFilePath, serverUrl, function(status5) {
+                  httphelper.getWebServerHost(function(status5, serverHost) {
                     if (status5 == 'OK') {
-                      console.log('MiscLogArchivesCharacteristic - uploadLogArchive status == OK');
+                      helper.uploadLogArchive(apiKey, zipFilePath, serverUrl, serverHost, function(status6) {
+                        if (status6 == 'OK') {
+                          console.log('MiscLogArchivesCharacteristic - uploadLogArchive status == OK');
+                        } else {
+                          console.log('MiscLogArchivesCharacteristic - uploadLogArchive status != OK');
+                        }
+                      });
                     } else {
-                      console.log('MiscLogArchivesCharacteristic - uploadLogArchive status != OK');
+                      console.log('MiscLogArchivesCharacteristic - getWebServerHost status != OK');
                     }
                   });
                 } else {

@@ -73,6 +73,20 @@ HttpHelper.setAcknowledgementRequested = function(ackRequested, callback) {
 };
 
 
+HttpHelper.getPower = function(callback) {
+  console.log('HttpHelper - getPower');
+  HttpHelper.getHttpGetResponse('/radioconfiguration/power/', function(status, body) {
+    callback(status, body == null ? null : JSON.parse(body).Power);
+  });
+};
+
+HttpHelper.setPower = function(power, callback) {
+  console.log('HttpHelper - setPower');
+  HttpHelper.getHttpGetResponse('/radioconfiguration/power/' + power + '/', function(status, body) {
+    callback(status, body == null ? null : JSON.parse(body).Power);
+  });
+};
+
 HttpHelper.getSendToMeosEnabled = function(callback) {
   console.log('HttpHelper - getSendToMeosEnabled');
   HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosenabled/', function(status, body) {
@@ -213,6 +227,13 @@ HttpHelper.getWebServerUrl = function(callback) {
   });
 };
 
+HttpHelper.getWebServerHost = function(callback) {
+  console.log('HttpHelper - getWebServerHost');
+  HttpHelper.getHttpGetResponse('/misc/webserverhost/', function(status, body) {
+    console.log('HttpHelper - getWebServerHost: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).WebServerHost);
+  });
+};
 
 HttpHelper.getAll = function(callback) {
   console.log('HttpHelper - getAll');

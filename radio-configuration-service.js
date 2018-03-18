@@ -7,6 +7,7 @@ var BlenoPrimaryService = bleno.PrimaryService;
 var RadioConfigurationChannelCharacteristic = require('./radio-configuration-channel-characteristic');
 var RadioConfigurationAcknowledgementCharacteristic = require('./radio-configuration-acknowledgement-characteristic');
 var RadioConfigurationDataRateCharacteristic = require('./radio-configuration-data-rate-characteristic');
+var RadioConfigurationPowerCharacteristic = require('./radio-configuration-power-characteristic');
 
 function RadioConfigurationService() {
   RadioConfigurationService.super_.call(this, {
@@ -14,7 +15,8 @@ function RadioConfigurationService() {
       characteristics: [
           new RadioConfigurationChannelCharacteristic(),
           new RadioConfigurationAcknowledgementCharacteristic(),
-          new RadioConfigurationDataRateCharacteristic()
+          new RadioConfigurationDataRateCharacteristic(),
+          new RadioConfigurationPowerCharacteristic()
       ]
   });
 }

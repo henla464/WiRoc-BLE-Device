@@ -51,7 +51,7 @@ Helper.getBTAddress = function(callback) {
       stdout = stdout.replace("Devices:","");
       stdout = stdout.trim();
       var btAddress = "NoBTAddress";
-      var stdoutWords = stdout.split(" ");
+      var stdoutWords = stdout.split("\t");
       if (stdoutWords.length > 1 && stdoutWords[1].length == 17) {
          btAddress = stdoutWords[1]
       }
@@ -80,8 +80,8 @@ Helper.zipLogArchive = function(zipFilePath, callback) {
   });
 };
 
-Helper.uploadLogArchive = function(apiKey, filePath, serverUrl, callback) {
-  var cmd = "curl -X POST \"" + serverUrl + "/api/v1/LogArchives\" -H \"accept: application/json\" -H \"Authorization: " + apiKey + "\" -F \"newfile=@" + filePath;
+Helper.uploadLogArchive = function(apiKey, filePath, serverUrl, serverHost, callback) {
+  var cmd = "curl -X POST \"" + serverUrl + "/api/v1/LogArchives\" -H \"host: " + serverHost + "\" -H \"accept: application/json\" -H \"Authorization: " + apiKey + "\" -F \"newfile=@" + filePath +"\"";
   //console.log(cmd);
   exec(cmd, function(error, stdout, stderr) {
     if (error) {
@@ -89,6 +89,9 @@ Helper.uploadLogArchive = function(apiKey, filePath, serverUrl, callback) {
       console.log(stderr);
       callback('ERROR');
     } else {
+      if (stdout.length > 0) {
+        console.log(stdout);
+      }
       callback('OK');
     }
   });
