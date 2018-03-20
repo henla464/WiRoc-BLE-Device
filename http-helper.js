@@ -261,24 +261,26 @@ HttpHelper.getAll = function(callback) {
                 HttpHelper.getHttpGetResponse('/radioconfiguration/channel/', function(status, body) {
                   if (status != 'OK') { callback(status, null); return;}
                   var channel = (body == null ? null : JSON.parse(body).Channel);
-                  helper.getBatteryLevel(function(status, intPercent) {
+                  HttpHelper.getHttpGetResponse('/radioconfiguration/power/', function(status, body) {
                     if (status != 'OK') { callback(status, null); return;}
-                    helper.getIP(function(status, data) {
-                      if (status != 'OK') { callback(status, data); return;}
-                      var ipAddress = data;
-                      var properties = {};
-                      properties['isCharg'] = isCharging;
-                      properties['devName'] = wirocDeviceName == null ? '' : wirocDeviceName;
-                      properties['sirapIPPort'] = sentToSirapIPPort;
-                      properties['sirapIP'] = sendToSirapIP == null ? '' : sendToSirapIP;
-                      properties['sirapEn'] = sentToSirapEnabled;
-                      properties['ackReq'] = acknowledgementRequested;
-                      properties['dataRate'] = dataRate;
-                      properties['ch'] = channel;
-                      properties['battLvl'] = intPercent;
-                      properties['ip'] = ipAddress;
-                      jsonPropertiesString = JSON.stringify(properties); 
-                      callback(status, jsonPropertiesString);
+                    var power = (body == null ? null : JSON.parse(body).Power);
+                    helper.getBatteryLevel(function(status, intPercent) {
+                      if (status != 'OK') { callback(status, null); return;}
+                      helper.getIP(function(status, data) {
+                        if (status != 'OK') { callback(status, data); return;}
+                        var ipAddress = data;
+                        var all = isCharging + '¤' + (wirocDeviceName == null ? '' : wirocDeviceName);
+                        all += '¤' + sentToSirapIPPort;
+                        all += '¤' + (sendToSirapIP == null ? '' : sendToSirapIP);
+                        all += '¤' + (sentToSirapEnabled);
+                        all += '¤' + acknowledgementRequested;
+                        all += '¤' + dataRate;
+                        all += '¤' + channel;
+                        all += '¤' + intPercent;
+                        all += '¤' + ipAddress;
+                        all += '¤' + power;
+                        callback(status, all);
+                      });
                     });
                   });
                 });

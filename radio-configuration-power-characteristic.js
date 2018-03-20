@@ -7,7 +7,7 @@ var Characteristic = bleno.Characteristic;
 
 var RadioConfigurationPowerCharacteristic = function() {
   RadioConfigurationPowerCharacteristic.super_.call(this, {
-    uuid: 'DC57FFA9-D960-4202-82FD-5492696B02F6',
+    uuid: 'DC57FFA8-D960-4202-82FD-5492696B02F6',
     properties: ['read', 'write'],
     descriptors: [
       // User description
