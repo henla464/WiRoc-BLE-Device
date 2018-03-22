@@ -35,6 +35,7 @@ Helper.getIP = function(callback) {
       console.log(stderr);
       callback('ERROR');
     }
+    stdout = stdout.trim();
     callback('OK', stdout);
   });
 };

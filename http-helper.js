@@ -269,11 +269,12 @@ HttpHelper.getAll = function(callback) {
                       helper.getIP(function(status, data) {
                         if (status != 'OK') { callback(status, data); return;}
                         var ipAddress = data;
-                        var all = isCharging + '¤' + (wirocDeviceName == null ? '' : wirocDeviceName);
+                        var all = (isCharging ? '1':'0');
+			all += '¤' + (wirocDeviceName == null ? '' : wirocDeviceName);
                         all += '¤' + sentToSirapIPPort;
                         all += '¤' + (sendToSirapIP == null ? '' : sendToSirapIP);
-                        all += '¤' + (sentToSirapEnabled);
-                        all += '¤' + acknowledgementRequested;
+                        all += '¤' + (sentToSirapEnabled ? '1' : '0');
+                        all += '¤' + (acknowledgementRequested ? '1' : '0');
                         all += '¤' + dataRate;
                         all += '¤' + channel;
                         all += '¤' + intPercent;
@@ -292,6 +293,5 @@ HttpHelper.getAll = function(callback) {
     });
   });
 };
-
 
 module.exports = HttpHelper;
