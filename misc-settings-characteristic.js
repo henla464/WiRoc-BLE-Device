@@ -58,7 +58,7 @@ MiscSettingsCharacteristic.prototype.onReadRequest = function(offset, callback) 
 MiscSettingsCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('MiscSettingsCharacteristic - onWriteRequest');
   var thisObj = this;
-  var keyAndValue = data.toString('utf-8')
+  var keyAndValue = data.toString('utf-8');
   httphelper.setSetting(keyAndValue, function(status, retSetting) {
     console.log('MiscSettingsCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retSetting != null ? retSetting : 'null'));
     if (status == 'OK') {

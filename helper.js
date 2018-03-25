@@ -98,4 +98,33 @@ Helper.uploadLogArchive = function(apiKey, filePath, serverUrl, serverHost, call
   });
 };
 
+
+Helper.upgradeWiRocPython = function(version, callback) {
+  const spawn = require('child_process').spawn;
+  
+  var parentDir = path.resolve(process.cwd(), '..');
+  const child = spawn('./installWiRocPython.sh', [version], {
+    detached: true,
+    stdio: ['ignore'],
+    cwd: parentDir
+  });
+  child.unref();
+  console.log("Spawned installWiRocPython.sh");
+  callback('OK');
+};
+
+Helper.upgradeWiRocBLE = function(version, callback) {
+  const spawn = require('child_process').spawn;
+  
+  var parentDir = path.resolve(process.cwd(), '..');
+  const child = spawn('./installWiRocBLE.sh', [version], {
+    detached: true,
+    stdio: ['ignore'],
+    cwd: parentDir
+  });
+  child.unref();
+  console.log("Spawned installWiRocBLE.sh");
+  callback('OK');
+};
+
 module.exports = Helper;
