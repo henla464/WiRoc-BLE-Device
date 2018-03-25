@@ -103,10 +103,13 @@ Helper.upgradeWiRocPython = function(version, callback) {
   console.log("helper.upgradeWiRocPython");
   const spawn = require('child_process').spawn;
   const path = require('path');
+  const fs = require('fs');
+  const out = fs.openSync('./installWiRocPython.log', 'a');
+  const err = fs.openSync('./installWiRocPython.log', 'a');
   var parentDir = path.resolve(__dirname, '..');
   const child = spawn('./installWiRocPython.sh', [version], {
     detached: true,
-    stdio: ['ignore'],
+    stdio: ['ignore', out, err],
     cwd: parentDir
   });
   child.unref();
@@ -118,10 +121,13 @@ Helper.upgradeWiRocBLE = function(version, callback) {
   console.log("helper.upgradeWiRocBLE");
   const spawn = require('child_process').spawn;
   const path = require('path');
+  const fs = require('fs');
+  const out = fs.openSync('./installWiRocBLE.log', 'a');
+  const err = fs.openSync('./installWiRocBLE.log', 'a');
   var parentDir = path.resolve(__dirname, '..');
   const child = spawn('./installWiRocBLE.sh', [version], {
     detached: true,
-    stdio: ['ignore'],
+    stdio: ['ignore', out, err],
     cwd: parentDir
   });
   child.unref();
