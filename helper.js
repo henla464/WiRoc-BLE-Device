@@ -103,8 +103,7 @@ Helper.upgradeWiRocPython = function(version, callback) {
   console.log("helper.upgradeWiRocPython");
   const spawn = require('child_process').spawn;
   const path = require('path');
-  var scriptFolder = path.basename(__dirname);
-  var parentDir = path.resolve(scriptFolder, '..');
+  var parentDir = path.resolve(__dirname, '..');
   const child = spawn('./installWiRocPython.sh', [version], {
     detached: true,
     stdio: ['ignore'],
@@ -119,8 +118,7 @@ Helper.upgradeWiRocBLE = function(version, callback) {
   console.log("helper.upgradeWiRocBLE");
   const spawn = require('child_process').spawn;
   const path = require('path');
-  var scriptFolder = path.basename(__dirname);
-  var parentDir = path.resolve(scriptFolder, '..');
+  var parentDir = path.resolve(__dirname, '..');
   const child = spawn('./installWiRocBLE.sh', [version], {
     detached: true,
     stdio: ['ignore'],
