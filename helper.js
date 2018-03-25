@@ -100,8 +100,9 @@ Helper.uploadLogArchive = function(apiKey, filePath, serverUrl, serverHost, call
 
 
 Helper.upgradeWiRocPython = function(version, callback) {
+  console.log("helper.upgradeWiRocPython");
   const spawn = require('child_process').spawn;
-  
+  const path = require('path');  
   var parentDir = path.resolve(process.cwd(), '..');
   const child = spawn('./installWiRocPython.sh', [version], {
     detached: true,
@@ -114,8 +115,9 @@ Helper.upgradeWiRocPython = function(version, callback) {
 };
 
 Helper.upgradeWiRocBLE = function(version, callback) {
+  console.log("helper.upgradeWiRocBLE");
   const spawn = require('child_process').spawn;
-  
+  const path = require('path');
   var parentDir = path.resolve(process.cwd(), '..');
   const child = spawn('./installWiRocBLE.sh', [version], {
     detached: true,

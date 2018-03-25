@@ -32,15 +32,25 @@ util.inherits(MiscUpgradeCharacteristic, Characteristic);
 
 MiscUpgradeCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('MiscUpgradeCharacteristic - onWriteRequest');
+  var thisObj = this;
   var typeAndVersion = data.toString('utf-8')
-  var typeAndVersionArr = cmd.split(";");
+  var typeAndVersionArr = typeAndVersion.split(";");
   if (typeAndVersionArr[0] == "wirocpython") {
-    console.log('MiscUpgradeCharacteristic - wirocpython');
-    helper.upgradeWiRocPython(typeAndVersionArr[1]);
+    console.log('MiscUpgradeCharacteristic - wirocpython, version: ' + typeAndVersionArr[1]);
+    helper.upgradeWiRocPython(typeAndVersionArr[1], function (status) {
+      if (status == "OK") {
+        callback(thisObj.RESULT_SUCCESS);
+      }
+    });
   } else if (typeAndVersionArr[0] == "wirocble") {
-    console.log('MiscUpgradeCharacteristic - wirocble');
-    helper.upgradeWiRocBLE(typeAndVersionArr[1]);
+    console.log('MiscUpgradeCharacteristic - wirocble, version: ' + typeAndVersionArr[1]);
+    helper.upgradeWiRocBLE(typeAndVersionArr[1], function (status) {
+      if (status == "OK") {
+        callback(thisObj.RESULT_SUCCESS);
+      }
+    });
   }
+  callback(thisObj.RESULT_UNLIKELY_ERROR);
 };
 
 module.exports = MiscUpgradeCharacteristic;
