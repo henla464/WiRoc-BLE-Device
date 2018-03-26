@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "start install wiroc ble"
+echo "start update wiroc ble"
 WiRocBLEVersion=${1/v/}
 sleep 2
 systemctl stop WiRocBLE
@@ -15,5 +15,4 @@ mv WiRoc-BLE-Device-$WiRocBLEVersion WiRoc-BLE-Device
 echo "after mv"
 systemctl start WiRocBLE
 echo "after start WiRocBLE"
-
 
