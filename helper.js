@@ -62,13 +62,13 @@ Helper.getBTAddress = function(callback) {
 };
 
 Helper.getZipFilePath = function(btAddress, date) {
-	var filePath = "../LogArchive/LogArchive_" + btAddress + "_" + date.toISOString() + ".zip";
+	var filePath = "/home/chip/LogArchive/LogArchive_" + btAddress + "_" + date.toISOString() + ".zip";
 	return filePath;
 };
 
 
 Helper.zipLogArchive = function(zipFilePath, callback) {
-  var cmd = "zip " + zipFilePath + " ../WiRoc-Python-2/WiRoc.db ../WiRoc-Python-2/WiRoc.log ../WiRoc-Python-2/WiRoc.log.1 ../WiRoc-Python-2/WiRoc.log.2 ../WiRoc-Python-2/WiRoc.log.3";
+  var cmd = "zip " + zipFilePath + " /home/chip/WiRoc-Python-2/WiRoc.db /home/chip/WiRoc-Python-2/WiRoc.log*";
   //console.log(cmd);
   exec(cmd, function(error, stdout, stderr) {
     if (error) {
