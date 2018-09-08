@@ -16,20 +16,23 @@ var networkService = new NetworkService();
 
 console.log('bleno - echo');
 
-
-bleno.on('stateChange', function(state) {
-  console.log('on -> stateChange: ' + state);
-
-  if (state === 'poweredOn') {
+function startAdv() {
     setTimeout(function() {  
        httphelper.getWiRocDeviceName(function (status, deviceName) {
          console.log('WiRocDeviceName: ' + (deviceName != null ? deviceName : 'null') + ' Status: ' + status);
          if (deviceName == null) {
             deviceName = 'WiRoc Device';
          }
-         bleno.startAdvertising(deviceName, [batteryService.uuid, radioConfigurationService.uuid]);
+         bleno.startAdvertising(deviceName, [radioConfigurationService.uuid]);
        });
       }, 1000);
+}
+
+bleno.on('stateChange', function(state) {
+  console.log('on -> stateChange: ' + state);
+
+  if (state === 'poweredOn') {
+    startAdv();
   } else {
     bleno.stopAdvertising();
   }
@@ -58,19 +61,18 @@ bleno.on('advertisingStop', function() {
 
 
 bleno.on('accept', function(clientAddress) {
-	console.log('Connect from: ' + clientAddress);
+    console.log('Connect from: ' + clientAddress);
+    bleno.stopAdvertising();
 	
 });
 
 if (bleno.state === 'poweredOn') {
-    setTimeout(function() {  
-       httphelper.getWiRocDeviceName(function (status, deviceName) {
-         console.log('WiRocDeviceName: ' + (deviceName != null ? deviceName : 'null') + ' Status: ' + status);
-         if (deviceName == null) {
-            deviceName = 'WiRoc Device';
-         }
-         bleno.startAdvertising(deviceName, [batteryService.uuid, radioConfigurationService.uuid]);
-       });
-      }, 1000);
+    startAdv();
 }
+
+bleno.on('disconnect', function() {
+    startAdv();
+});
+
+
 
