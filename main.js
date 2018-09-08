@@ -1,4 +1,4 @@
-var bleno = require('bleno');
+var bleno = require('@ubnt/bleno');
 
 var BlenoPrimaryService = bleno.PrimaryService;
 
@@ -62,4 +62,15 @@ bleno.on('accept', function(clientAddress) {
 	
 });
 
+if (bleno.state === 'poweredOn') {
+    setTimeout(function() {  
+       httphelper.getWiRocDeviceName(function (status, deviceName) {
+         console.log('WiRocDeviceName: ' + (deviceName != null ? deviceName : 'null') + ' Status: ' + status);
+         if (deviceName == null) {
+            deviceName = 'WiRoc Device';
+         }
+         bleno.startAdvertising(deviceName, [batteryService.uuid, radioConfigurationService.uuid]);
+       });
+      }, 1000);
+}
 

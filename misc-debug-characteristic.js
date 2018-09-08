@@ -1,6 +1,6 @@
 var util = require('util');
 
-var bleno = require('bleno');
+var bleno = require('@ubnt/bleno');
 
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
