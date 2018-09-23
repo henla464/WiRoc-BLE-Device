@@ -12,7 +12,13 @@ echo "after rm"
 tar xvfz WiRoc-BLE-Device.tar.gz WiRoc-BLE-Device-$WiRocBLEVersion
 echo "after tar"
 mv WiRoc-BLE-Device-$WiRocBLEVersion WiRoc-BLE-Device
-echo "after mv"
+
+echo "Update WiRocBLE version"
+cat << EOF > WiRocBLEVersion.txt
+${WiRocBLEVersion}
+EOF
+
+echo "after update version"
 systemctl start WiRocBLE
 echo "after start WiRocBLE"
 
