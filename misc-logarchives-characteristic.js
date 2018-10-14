@@ -1,5 +1,5 @@
 var util = require('util');
-var bleno = require('@ubnt/bleno');
+var bleno = require('@henla464/bleno');
 var httphelper = require('./http-helper');
 var helper = require('./helper');
 

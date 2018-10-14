@@ -1,0 +1,49 @@
+Bleno
+avertisementData: 
+2 0x01 0x06
+length 0x03 serviceuuids16bit{1..n}
+length 0x06 serviceuuids128bit{1..n}
+
+scanData:
+length 0x08 name
+
+startAdvertisingWithEIRData(advertismentData, scanData)
+
+
+Ubiqity bleno
+advertisementData:
+2 0x01 0x06
+length 0x03 serviceuuids16bit{1..n}
+length 0x06 serviceuuids128bit{1..n}
+length 0x08 slicedname
+
+scanData:
+length 0x16 uuid1 uuid2 data
+
+
+
+
+--------------------
+length 0x09 completename
+
+
+
+read bd addr
+le read bufer size
+set advertising parameters
+set advertise enable
+le set scan response
+le set advertising data
+
+read bd addr
+le read buffer size
+le set advertise enable
+le set advertising parametser
+set scan response data
+set advertising data
+set advertise enable
+set scan response data
+set asdvertising data
+set advertise enable
+
+

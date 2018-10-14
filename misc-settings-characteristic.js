@@ -1,5 +1,5 @@
 var util = require('util');
-var bleno = require('@ubnt/bleno');
+var bleno = require('@henla464/bleno');
 var httphelper = require('./http-helper');
 
 
@@ -62,6 +62,10 @@ MiscSettingsCharacteristic.prototype.onWriteRequest = function(data, offset, wit
   httphelper.setSetting(keyAndValue, function(status, retSetting) {
     console.log('MiscSettingsCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retSetting != null ? retSetting : 'null'));
     if (status == 'OK') {
+      var keyAndValueArr = keyAndValue.split(';');
+      if (keyAndValueArr[0] == 'WiRocDeviceName') {
+         bleno.setDeviceName(keyAndValueArr[1]);
+      }
       callback(thisObj.RESULT_SUCCESS);
     } else {
       callback(thisObj.RESULT_UNLIKELY_ERROR);

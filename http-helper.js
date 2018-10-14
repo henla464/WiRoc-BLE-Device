@@ -227,11 +227,11 @@ HttpHelper.getWebServerUrl = function(callback) {
   });
 };
 
-HttpHelper.getWebServerHost = function(callback) {
-  console.log('HttpHelper - getWebServerHost');
-  HttpHelper.getHttpGetResponse('/misc/webserverhost/', function(status, body) {
-    console.log('HttpHelper - getWebServerHost: ' + body);
-    callback(status, body == null ? null : JSON.parse(body).WebServerHost);
+HttpHelper.getVersions = function(callback) {
+  console.log('HttpHelper - getVersions');
+  HttpHelper.getHttpGetResponse('/misc/versions/', function(status, body) {
+    console.log('HttpHelper - getVersions: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).Versions);
   });
 };
 

@@ -1,6 +1,6 @@
 var exec = require('child_process').exec;
 var util = require('util');
-var bleno = require('@ubnt/bleno');
+var bleno = require('@henla464/bleno');
 var os = require("os");
 
 var Descriptor = bleno.Descriptor;

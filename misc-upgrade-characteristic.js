@@ -1,5 +1,5 @@
 var util = require('util');
-var bleno = require('@ubnt/bleno');
+var bleno = require('@henla464/bleno');
 var helper = require('./helper');
 
 
@@ -11,7 +11,7 @@ var MiscUpgradeCharacteristic = function() {
 
   MiscUpgradeCharacteristic.super_.call(this, {
     uuid: 'FB88090C-4AB2-40A2-A8F0-14CC1C2E5608',
-    properties: ['write'],
+    properties: ['write','read'],
     descriptors: [
       // User description
       new Descriptor({
@@ -25,10 +25,36 @@ var MiscUpgradeCharacteristic = function() {
       })
     ]
   });
-  this.settings = null;
+  this.versions = null;
 };
 
 util.inherits(MiscUpgradeCharacteristic, Characteristic);
+
+
+MiscUpgradeCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('MiscUpgradeCharacteristic - onReadRequest offset ' + offset);
+  var thisObj = this;
+  if (offset == 0) {
+    httphelper.getVersions(function (status, versions) {
+      console.log('MiscUpgradeCharacteristic - onReadRequest: status = "' + status + '" value = ' + (versions != null ? versions : 'null'));
+      thisObj.versions = new Buffer(versions, "utf-8");
+      if (status == 'OK') {
+        callback(thisObj.RESULT_SUCCESS, thisObj.versions);
+      } else {
+        callback(thisObj.RESULT_UNLIKELY_ERROR, null);
+      }
+    });
+  } else {
+    if (thisObj.versions == null || offset > thisObj.versions.length) {
+      result = this.RESULT_INVALID_OFFSET;
+      thisObj.versions = null;
+    } else {
+      var buf = this.versions.slice(offset);
+      callback(thisObj.RESULT_SUCCESS, buf);
+    }
+  }
+};
+
 
 MiscUpgradeCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('MiscUpgradeCharacteristic - onWriteRequest');
