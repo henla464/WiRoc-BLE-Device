@@ -6,7 +6,7 @@ var Helper = Helper || {}
 Helper.getBatteryLevel = function(callback) {
   console.log('Helper - get battery level');
   var hostname = os.hostname();
-  if (hostname == "chip") {
+  if (hostname == "chip" || hostname == "nanopiair") {
     child = exec("/usr/sbin/i2cget -f -y 0 0x34 0xb9", function (error, stdout, stderr) {
       //console.log('stdout: ' + stdout);
       //console.log('stderr: ' + stderr);
