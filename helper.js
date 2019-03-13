@@ -137,4 +137,39 @@ Helper.upgradeWiRocBLE = function(version, callback) {
   callback('OK');
 };
 
+Helper.stopHCI = function(callback) {
+  var cmd = "hciconfig hci0 down";
+  console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+    if (error) {
+      console.log('Helper.stopHCI: error code: "' + error + '"');
+      console.log(stderr);
+      callback('ERROR');
+    } else {
+      if (stdout.length > 0) {
+        console.log(stdout);
+      }
+      callback('OK');
+    }
+  });
+};
+
+Helper.startHCI = function(callback) {
+  var cmd = "hciconfig hci0 up";
+  console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+    if (error) {
+      console.log('Helper.startHCI: error code: "' + error + '"');
+      console.log(stderr);
+      callback('ERROR');
+    } else {
+      if (stdout.length > 0) {
+        console.log(stdout);
+      }
+      callback('OK');
+    }
+  });
+};
+
+
 module.exports = Helper;

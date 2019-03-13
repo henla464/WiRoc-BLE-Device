@@ -1,7 +1,7 @@
 var util = require('util');
 var bleno = require('@henla464/bleno');
 var helper = require('./helper');
-
+var httphelper = require('./http-helper');
 
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;

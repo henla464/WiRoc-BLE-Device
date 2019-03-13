@@ -3,6 +3,7 @@ var bleno = require('@henla464/bleno');
 var BlenoPrimaryService = bleno.PrimaryService;
 
 var httphelper = require('./http-helper');
+var helper = require('./helper');
 var BatteryService = require('./battery-service');
 var batteryService = new BatteryService();
 var RadioConfigurationService = require('./radio-configuration-service');
@@ -71,6 +72,17 @@ if (bleno.state === 'poweredOn') {
 }
 
 bleno.on('disconnect', function() {
+    helper.stopHCI(function (status) {
+      if (status == "OK") {
+        console.log('StopHCI OK');
+      }
+      helper.startHCI(function (status) {
+        if (status == "OK") {
+          console.log('StartHCI OK');
+        }
+      });
+    });
+
     startAdv();
 });
 
