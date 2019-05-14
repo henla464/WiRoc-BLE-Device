@@ -68,7 +68,17 @@ bleno.on('accept', function(clientAddress) {
 });
 
 if (bleno.state === 'poweredOn') {
-    startAdv();
+    helper.stopHCI(function (status) {
+      if (status == "OK") {
+        console.log('StopHCI OK');
+      }
+      helper.startHCI(function (status) {
+        if (status == "OK") {
+          console.log('StartHCI OK');
+        }
+        startAdv();
+      });
+    });
 }
 
 bleno.on('disconnect', function() {
