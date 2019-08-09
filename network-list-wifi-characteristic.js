@@ -49,11 +49,12 @@ NetworkListWifiCharacteristic.prototype.onReadRequest = function(offset, callbac
   } else {
     var data = null;
     if (thisObj.wifiDataList == null || offset > thisObj.wifiDataList.length) {
-      result = this.RESULT_INVALID_OFFSET;
+      result = thisObj.RESULT_INVALID_OFFSET;
       thisObj.wifiDataList = null;
     } else {
-//  console.log('NetworkListWifiCharacteristic - onReadRequest - stdout' + thisObj.wifiDataList.slice(offset).toString());
+      result = thisObj.RESULT_SUCCESS;
       data = thisObj.wifiDataList.slice(offset);
+  console.log('NetworkListWifiCharacteristic - onReadRequest - stdout' + data.toString());
     }
     callback(result, data);
   }

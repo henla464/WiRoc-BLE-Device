@@ -16,6 +16,11 @@ var MiscAllCharacteristic = require('./misc-all-characteristic');
 var MiscDeviceNameCharacteristic = require('./misc-devicename-characteristic');
 var MiscLogArchivesCharacteristic = require('./misc-logarchives-characteristic');
 var MiscUpgradeCharacteristic = require('./misc-upgrade-characteristic');
+var MiscLogToServerCharacteristic = require('./misc-log-to-server-characteristic');
+var MiscLoggingServerHostCharacteristic = require('./misc-logging-server-host-characteristic');
+var MiscLoggingServerPortCharacteristic = require('./misc-logging-server-port-characteristic');
+var MiscForce4800BaudRateCharacteristic = require('./misc-force-4800-baud-rate-characteristic');
+var MiscOneWayReceiveCharacteristic = require('./misc-one-way-receive-characteristic');
 
 function MiscService() {
 	MiscService.super_.call(this, {
@@ -32,7 +37,12 @@ function MiscService() {
 	new MiscAllCharacteristic(),
 	new MiscDeviceNameCharacteristic(),
 	new MiscLogArchivesCharacteristic(),
-	new MiscUpgradeCharacteristic()
+	new MiscUpgradeCharacteristic(),
+	new MiscLogToServerCharacteristic(),
+	new MiscLoggingServerHostCharacteristic(),
+	new MiscLoggingServerPortCharacteristic(),
+	new MiscForce4800BaudRateCharacteristic(),
+	new MiscOneWayReceiveCharacteristic()
       ]
   });
 }

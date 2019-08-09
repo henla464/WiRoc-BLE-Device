@@ -44,13 +44,15 @@ MiscSettingsCharacteristic.prototype.onReadRequest = function(offset, callback) 
       }
     });
   } else {
+    var data = null;
     if (thisObj.settings == null || offset > thisObj.settings.length) {
-      result = this.RESULT_INVALID_OFFSET;
+      result = thisObj.RESULT_INVALID_OFFSET;
       thisObj.settings = null;
     } else {
-      var buf = this.settings.slice(offset);
-      callback(thisObj.RESULT_SUCCESS, buf);
+      var data = this.settings.slice(offset);
+      result = thisObj.RESULT_SUCCESS;
     }
+    callback(result, data);
   }
 };
 

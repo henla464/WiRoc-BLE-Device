@@ -9,13 +9,13 @@ var BlenoCharacteristic = bleno.Characteristic;
 var MiscDeviceNameCharacteristic = function() {
 	MiscDeviceNameCharacteristic.super_.call(this, {
     uuid: 'FB88090A-4AB2-40A2-A8F0-14CC1C2E5608',
-    properties: ['read'],
+    properties: ['read', 'write'],
     value: null,
     descriptors: [
 	// User description
 	new Descriptor({
 	  uuid: '2901',
-	  value: 'Get wiroc device name'
+	  value: 'Get/set wiroc device name'
 	}),
 	// presentation format: 0x19=utf8, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
 	new Descriptor({
@@ -45,7 +45,7 @@ MiscDeviceNameCharacteristic.prototype.onReadRequest = function(offset, callback
       }
     });
   } else {
-    if (thisObj.settings == null || offset > thisObj.settings.length) {
+    if (thisObj.deviceName == null || offset > thisObj.deviceName.length) {
       result = this.RESULT_INVALID_OFFSET;
       thisObj.deviceName = null;
     } else {
@@ -55,6 +55,20 @@ MiscDeviceNameCharacteristic.prototype.onReadRequest = function(offset, callback
   }
 };
 
+
+MeosEnabledCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('MiscDeviceNameCharacteristic - onWriteRequest');
+  var thisObj = this;
+  var deviceName = data.toString('utf-8')
+  httphelper.setWiRocDeviceName(ip, function(status, retDeviceName) {
+    console.log('MiscDeviceNameCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retDeviceName != null ? retDeviceName : 'null'));
+    if (status == 'OK') {
+      callback(thisObj.RESULT_SUCCESS);
+    } else {
+      callback(thisObj.RESULT_UNLIKELY_ERROR);
+    }
+  });
+};
 
 MiscDeviceNameCharacteristic.prototype.disconnect = function(clientAddress) {
 	console.log('MiscDeviceNameCharacteristic - disconnect');

@@ -244,6 +244,98 @@ HttpHelper.getVersions = function(callback) {
   });
 };
 
+HttpHelper.setWiRocDeviceName = function(deviceName, callback) {
+  console.log('HttpHelper - setWiRocDeviceName');
+  HttpHelper.getHttpGetResponse('/misc/wirocdevicename/' + deviceName + '/', function(status, body) {
+    var wirocDeviceName = (body == null ? '' : JSON.parse(body).WirocDeviceName)
+    callback(status, wirocDeviceName == null ? '' : wirocDeviceName);
+  });
+};
+
+
+HttpHelper.getLogToServer = function(callback) {
+  console.log('HttpHelper - getLogToServer');
+  HttpHelper.getHttpGetResponse('/misc/logtoserver/', function(status, body) {
+    console.log('HttpHelper - getLogToServer: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).LogToServer);
+  });
+};
+
+HttpHelper.setLogToServer = function(logToServer, callback) {
+  console.log('HttpHelper - setLogToServer');
+  HttpHelper.getHttpGetResponse('/misc/logtoserver/' + logToServer + '/', function(status, body) {
+    var logToServerRet = (body == null ? '' : JSON.parse(body).LogToServer)
+    callback(status, logToServerRet == null ? null : logToServerRet);
+  });
+};
+
+
+HttpHelper.getLoggingServerHost = function(callback) {
+  console.log('HttpHelper - getLoggingServerHost');
+  HttpHelper.getHttpGetResponse('/misc/loggingserverhost/', function(status, body) {
+    console.log('HttpHelper - getLoggingServerHost: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).LoggingServerHost);
+  });
+};
+
+HttpHelper.setLoggingServerHost = function(loggingServerHost, callback) {
+  console.log('HttpHelper - setLoggingServerHost');
+  HttpHelper.getHttpGetResponse('/misc/loggingserverhost/' + loggingServerHost + '/', function(status, body) {
+    var loggingServerHostRet = (body == null ? '' : JSON.parse(body).LoggingServerHost)
+    callback(status, loggingServerHostRet == null ? null : loggingServerHostRet);
+  });
+};
+
+HttpHelper.getLoggingServerPort = function(callback) {
+  console.log('HttpHelper - getLoggingServerPort');
+  HttpHelper.getHttpGetResponse('/misc/loggingserverport/', function(status, body) {
+    console.log('HttpHelper - getLoggingServerPort: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).LoggingServerPort);
+  });
+};
+
+HttpHelper.setLoggingServerPort = function(loggingServerPort, callback) {
+  console.log('HttpHelper - setLoggingServerPort');
+  HttpHelper.getHttpGetResponse('/misc/loggingserverport/' + loggingServerPort + '/', function(status, body) {
+    var loggingServerPortRet = (body == null ? '' : JSON.parse(body).LoggingServerPort)
+    callback(status, loggingServerPortRet == null ? null : loggingServerPortRet);
+  });
+};
+
+
+HttpHelper.getOneWayReceive = function(callback) {
+  console.log('HttpHelper - getOneWayReceive');
+  HttpHelper.getHttpGetResponse('/misc/onewayreceive/', function(status, body) {
+    console.log('HttpHelper - getOneWayReceive: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).OneWayReceive);
+  });
+};
+
+HttpHelper.setOneWayReceive = function(oneWayReceiveEnabled, callback) {
+  console.log('HttpHelper - setOneWayReceive');
+  HttpHelper.getHttpGetResponse('/misc/onewayreceive/' + oneWayReceiveEnabled + '/', function(status, body) {
+    var oneWayReceiveRet = (body == null ? '' : JSON.parse(body).OneWayReceive)
+    callback(status, oneWayReceiveRet == null ? null : oneWayReceiveRet);
+  });
+};
+
+HttpHelper.getForce4800BaudRate = function(callback) {
+  console.log('HttpHelper - getForce4800BaudRate');
+  HttpHelper.getHttpGetResponse('/misc/force4800baudrate/', function(status, body) {
+    console.log('HttpHelper - getForce4800BaudRate: ' + body);
+    callback(status, body == null ? null : JSON.parse(body).Force4800BaudRate);
+  });
+};
+
+HttpHelper.setForce4800BaudRate = function(force4800BaudRate, callback) {
+  console.log('HttpHelper - setForce4800BaudRate');
+  HttpHelper.getHttpGetResponse('/misc/force4800baudrate/' + force4800BaudRate + '/', function(status, body) {
+    var force4800BaudRateRet = (body == null ? '' : JSON.parse(body).Force4800BaudRate)
+    callback(status, force4800BaudRateRet == null ? null : force4800BaudRateRet);
+  });
+};
+
+
 HttpHelper.getAll = function(callback) {
   console.log('HttpHelper - getAll');
   HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
