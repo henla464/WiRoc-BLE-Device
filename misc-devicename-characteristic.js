@@ -56,7 +56,7 @@ MiscDeviceNameCharacteristic.prototype.onReadRequest = function(offset, callback
 };
 
 
-MeosEnabledCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+MiscDeviceNameCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('MiscDeviceNameCharacteristic - onWriteRequest');
   var thisObj = this;
   var deviceName = data.toString('utf-8')

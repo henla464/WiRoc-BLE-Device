@@ -56,7 +56,7 @@ MiscLoggingServerHostCharacteristic.prototype.onReadRequest = function(offset, c
 };
 
 
-MeosEnabledCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+MiscLoggingServerHostCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('MiscLoggingServerHostCharacteristic - onWriteRequest');
   var thisObj = this;
   var loggingServerHost = data.toString('utf-8')
