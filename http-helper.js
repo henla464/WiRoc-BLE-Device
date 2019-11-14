@@ -9,16 +9,8 @@ HttpHelper.getHttpGetResponse = function(thePath, callback) {
     port: 5000,
     path: thePath
   }, function(response) {
-     if (response.statusCode != 200) {
-      console.log("non-200 response status code:");
-      console.log(response.statusCode);
-      console.log("for url:");
-      console.log(thePath);
-      callback('CONNECTION ERROR', null);
-      return;
-    }
-    // Continuously update stream with data
     var body = '';
+   // Continuously update stream with data
     response.on('data', function(d) {
       body += d;
     });
@@ -26,7 +18,15 @@ HttpHelper.getHttpGetResponse = function(thePath, callback) {
       // Data reception is done, do whatever with it!
       callback('OK', body);
     });
-  }).on("error", function (){console.log("GET request error");  callback('CONNECTION ERROR', null); });
+    if (response.statusCode != 200) {
+      console.log("non-200 response status code:");
+      console.log(response.statusCode);
+      console.log("for url:");
+      console.log(thePath);
+      callback('CONNECTION ERROR', null);
+      return;
+    }
+  }).on("error", function (){console.log("GET request error");  callback('CONNECTION ERROR', ''); });
 }
 
 
@@ -339,7 +339,7 @@ HttpHelper.setForce4800BaudRate = function(force4800BaudRate, callback) {
 HttpHelper.getAll = function(callback) {
   console.log('HttpHelper - getAll');
   HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
-    if (status != 'OK') { callback(status, null); return;}
+    if (status != 'OK') { callback(status, ''); return;}
     var isCharging = (body == null ? null : JSON.parse(body).IsCharging);
     HttpHelper.getHttpGetResponse('/misc/wirocdevicename/', function(status, body) {
       if (status != 'OK') { callback(status, null); return;}
