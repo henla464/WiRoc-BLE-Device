@@ -171,5 +171,21 @@ Helper.startHCI = function(callback) {
   });
 };
 
+Helper.startPatchAP6212 = function(callback) {
+  var cmd = "systemctl start ap6212-bluetooth";
+  console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+    if (error) {
+      console.log('Helper.startPatchAP6212: error code: "' + error + '"');
+      console.log(stderr);
+      callback('ERROR');
+    } else {
+      if (stdout.length > 0) {
+        console.log(stdout);
+      }
+      callback('OK');
+    }
+  });
+};
 
 module.exports = Helper;

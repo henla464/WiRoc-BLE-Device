@@ -79,6 +79,12 @@ if (bleno.state === 'poweredOn') {
         startAdv();
       });
     });
+} else {
+   Helper.startPatchAP6212(function (status) {
+      if (status == "OK") {
+        console.log('startPatchAP6212 OK');
+      }
+   });
 }
 
 bleno.on('disconnect', function() {

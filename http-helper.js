@@ -336,7 +336,7 @@ HttpHelper.setForce4800BaudRate = function(force4800BaudRate, callback) {
 };
 
 
-HttpHelper.getAll = function(callback) {
+HttpHelper.getAllOld = function(callback) {
   console.log('HttpHelper - getAll');
   HttpHelper.getHttpGetResponse('/misc/ischarging/', function(status, body) {
     if (status != 'OK') { callback(status, ''); return;}
@@ -390,6 +390,24 @@ HttpHelper.getAll = function(callback) {
             });
           });
         });
+      });
+    });
+  });
+};
+
+
+HttpHelper.getAll = function(callback) {
+  console.log('HttpHelper - getAll');
+  HttpHelper.getHttpGetResponse('/misc/allmainsettings/', function(status, body) {
+    if (status != 'OK') { callback(status, ''); return;}
+    var all = (body == null ? null : JSON.parse(body).All);
+    helper.getBatteryLevel(function(status, intPercent) {
+      if (status != 'OK') { callback(status, null); return;}
+      helper.getIP(function(status, data) {
+        if (status != 'OK') { callback(status, data); return;}
+        var ipAddress = data;
+        all.replace('%ipAddress%', ipAddress).replace('%batteryPercent%', intPercent);
+        callback(status, all);
       });
     });
   });
