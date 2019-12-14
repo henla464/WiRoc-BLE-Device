@@ -80,7 +80,7 @@ if (bleno.state === 'poweredOn') {
       });
     });
 } else {
-   Helper.startPatchAP6212(function (status) {
+   helper.startPatchAP6212(function (status) {
       if (status == "OK") {
         console.log('startPatchAP6212 OK');
       }

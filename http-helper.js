@@ -406,7 +406,7 @@ HttpHelper.getAll = function(callback) {
       helper.getIP(function(status, data) {
         if (status != 'OK') { callback(status, data); return;}
         var ipAddress = data;
-        all.replace('%ipAddress%', ipAddress).replace('%batteryPercent%', intPercent);
+        all = all.replace('%ipAddress%', ipAddress).replace('%batteryPercent%', intPercent);
         callback(status, all);
       });
     });
