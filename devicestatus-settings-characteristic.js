@@ -6,10 +6,10 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscSettingsCharacteristic = function() {
+var DeviceStatusSettingsCharacteristic = function() {
 
 
-  MiscSettingsCharacteristic.super_.call(this, {
+  DeviceStatusSettingsCharacteristic.super_.call(this, {
     uuid: 'FB880904-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     descriptors: [
@@ -28,14 +28,14 @@ var MiscSettingsCharacteristic = function() {
   this.settings = null;
 };
 
-util.inherits(MiscSettingsCharacteristic, Characteristic);
+util.inherits(DeviceStatusSettingsCharacteristic, Characteristic);
 
-MiscSettingsCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscSettingsCharacteristic - onReadRequest offset ' + offset);
+DeviceStatusSettingsCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DeviceStatusSettingsCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
   if (offset == 0) {
     httphelper.getSettings(function (status, settings) {
-      console.log('MiscSettingsCharacteristic - onReadRequest: status = "' + status + '" value = ' + (settings != null ? settings : 'null'));
+      console.log('DeviceStatusSettingsCharacteristic - onReadRequest: status = "' + status + '" value = ' + (settings != null ? settings : 'null'));
       thisObj.settings = new Buffer(settings, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj.settings);
@@ -57,12 +57,12 @@ MiscSettingsCharacteristic.prototype.onReadRequest = function(offset, callback) 
 };
 
 
-MiscSettingsCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscSettingsCharacteristic - onWriteRequest');
+DeviceStatusSettingsCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DeviceStatusSettingsCharacteristic - onWriteRequest');
   var thisObj = this;
   var keyAndValue = data.toString('utf-8');
   httphelper.setSetting(keyAndValue, function(status, retSetting) {
-    console.log('MiscSettingsCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retSetting != null ? retSetting : 'null'));
+    console.log('DeviceStatusSettingsCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retSetting != null ? retSetting : 'null'));
     if (status == 'OK') {
       var keyAndValueArr = keyAndValue.split(';');
       if (keyAndValueArr[0] == 'WiRocDeviceName') {
@@ -75,4 +75,4 @@ MiscSettingsCharacteristic.prototype.onWriteRequest = function(data, offset, wit
   });
 };
 
-module.exports = MiscSettingsCharacteristic;
+module.exports = DeviceStatusSettingsCharacteristic;

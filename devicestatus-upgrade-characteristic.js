@@ -6,10 +6,10 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscUpgradeCharacteristic = function() {
+var DeviceStatusUpgradeCharacteristic = function() {
 
 
-  MiscUpgradeCharacteristic.super_.call(this, {
+  DeviceStatusUpgradeCharacteristic.super_.call(this, {
     uuid: 'FB88090C-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['write','read'],
     descriptors: [
@@ -28,15 +28,15 @@ var MiscUpgradeCharacteristic = function() {
   this.versions = null;
 };
 
-util.inherits(MiscUpgradeCharacteristic, Characteristic);
+util.inherits(DeviceStatusUpgradeCharacteristic, Characteristic);
 
 
-MiscUpgradeCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscUpgradeCharacteristic - onReadRequest offset ' + offset);
+DeviceStatusUpgradeCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DeviceStatusUpgradeCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
   if (offset == 0) {
     httphelper.getVersions(function (status, versions) {
-      console.log('MiscUpgradeCharacteristic - onReadRequest: status = "' + status + '" value = ' + (versions != null ? versions : 'null'));
+      console.log('DeviceStatusUpgradeCharacteristic - onReadRequest: status = "' + status + '" value = ' + (versions != null ? versions : 'null'));
       thisObj.versions = new Buffer(versions, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj.versions);
@@ -56,20 +56,20 @@ MiscUpgradeCharacteristic.prototype.onReadRequest = function(offset, callback) {
 };
 
 
-MiscUpgradeCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscUpgradeCharacteristic - onWriteRequest');
+DeviceStatusUpgradeCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DeviceStatusUpgradeCharacteristic - onWriteRequest');
   var thisObj = this;
   var typeAndVersion = data.toString('utf-8')
   var typeAndVersionArr = typeAndVersion.split(";");
   if (typeAndVersionArr[0] == "wirocpython") {
-    console.log('MiscUpgradeCharacteristic - wirocpython, version: ' + typeAndVersionArr[1]);
+    console.log('DeviceStatusUpgradeCharacteristic - wirocpython, version: ' + typeAndVersionArr[1]);
     helper.upgradeWiRocPython(typeAndVersionArr[1], function (status) {
       if (status == "OK") {
         callback(thisObj.RESULT_SUCCESS);
       }
     });
   } else if (typeAndVersionArr[0] == "wirocble") {
-    console.log('MiscUpgradeCharacteristic - wirocble, version: ' + typeAndVersionArr[1]);
+    console.log('DeviceStatusUpgradeCharacteristic - wirocble, version: ' + typeAndVersionArr[1]);
     helper.upgradeWiRocBLE(typeAndVersionArr[1], function (status) {
       if (status == "OK") {
         callback(thisObj.RESULT_SUCCESS);
@@ -79,4 +79,4 @@ MiscUpgradeCharacteristic.prototype.onWriteRequest = function(data, offset, with
   callback(thisObj.RESULT_UNLIKELY_ERROR);
 };
 
-module.exports = MiscUpgradeCharacteristic;
+module.exports = DeviceStatusUpgradeCharacteristic;

@@ -5,8 +5,8 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscBatteryCharacteristic = function() {
-	MiscBatteryCharacteristic.super_.call(this, {
+var DeviceStatusBatteryCharacteristic = function() {
+	DeviceStatusBatteryCharacteristic.super_.call(this, {
     uuid: 'FB880908-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read'],
     descriptors: [
@@ -24,13 +24,13 @@ var MiscBatteryCharacteristic = function() {
   });
 };
 
-util.inherits(MiscBatteryCharacteristic, Characteristic);
+util.inherits(DeviceStatusBatteryCharacteristic, Characteristic);
 
-MiscBatteryCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscBatteryCharacteristic - onReadRequest');
+DeviceStatusBatteryCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DeviceStatusBatteryCharacteristic - onReadRequest');
   var thisObj = this;
   httphelper.getIsCharging(function (status, isCharging) {
-    console.log('MiscBatteryCharacteristic - onReadRequest:  status = "' + status + '" value = ' + (isCharging != null ? (isCharging ? 'True' : 'False') : 'null'));
+    console.log('DeviceStatusBatteryCharacteristic - onReadRequest:  status = "' + status + '" value = ' + (isCharging != null ? (isCharging ? 'True' : 'False') : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS, new Buffer([isCharging ? 1 : 0]));
     } else {
@@ -40,4 +40,4 @@ MiscBatteryCharacteristic.prototype.onReadRequest = function(offset, callback) {
 };
 
 
-module.exports = MiscBatteryCharacteristic;
+module.exports = DeviceStatusBatteryCharacteristic;
