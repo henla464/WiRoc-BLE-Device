@@ -14,6 +14,14 @@ var MeosService = require('./meos-service');
 var meosService = new MeosService();
 var NetworkService = require('./network-service');
 var networkService = new NetworkService();
+var DeviceStatusService = require('./device-status-service');
+var deviceStatusService = new DeviceStatusService();
+var DebugService = require('./debug-service');
+var debugService = new DebugService();
+var SportIdentService = require('./sportident-service');
+var sportIdentService = new SportIdentService();
+var PunchesService = require('./punches-service');
+var punchesService = new PunchesService();
 
 console.log('bleno - echo');
 
@@ -48,7 +56,11 @@ bleno.on('advertisingStart', function(error) {
         radioConfigurationService,
         miscService,
 	meosService,
-	networkService
+	networkService,
+	deviceStatusService,
+	debugService,
+	sportIdentService,
+	punchesService
       ], function(error) {
         console.log('setServices: '  + (error ? 'error ' + error : 'success'));
       }
