@@ -8,8 +8,6 @@ var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
 var DebugDatabaseCharacteristic = function() {
-
-
   DebugDatabaseCharacteristic.super_.call(this, {
     uuid: 'FB880906-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['write'],

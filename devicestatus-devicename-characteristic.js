@@ -37,7 +37,11 @@ DeviceStatusDeviceNameCharacteristic.prototype.onReadRequest = function(offset, 
   if (offset == 0) {
     httphelper.getWiRocDeviceName(function (status, deviceName) {
       console.log('DeviceStatusDeviceNameCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
-      thisObj.deviceName = new Buffer(deviceName, "utf-8");
+      if (deviceName == null) {
+        thisObj.deviceName = new Buffer("WiRoc Device", "utf-8");
+      } else {
+        thisObj.deviceName = new Buffer(deviceName, "utf-8");
+      }
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj.deviceName);
       } else {
@@ -60,7 +64,7 @@ DeviceStatusDeviceNameCharacteristic.prototype.onWriteRequest = function(data, o
   console.log('DeviceStatusDeviceNameCharacteristic - onWriteRequest');
   var thisObj = this;
   var deviceName = data.toString('utf-8')
-  httphelper.setWiRocDeviceName(ip, function(status, retDeviceName) {
+  httphelper.setWiRocDeviceName(deviceName, function(status, retDeviceName) {
     console.log('DeviceStatusDeviceNameCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retDeviceName != null ? retDeviceName : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);

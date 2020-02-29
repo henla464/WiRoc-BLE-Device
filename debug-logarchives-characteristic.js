@@ -33,7 +33,7 @@ util.inherits(DebugLogArchivesCharacteristic, Characteristic);
 
 DebugLogArchivesCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('DebugLogArchivesCharacteristic - onWriteRequest');
-
+  var thisObj = this;
   helper.getBTAddress(function(status, btAddress) {
     if (status == 'OK') {
       var dateNow = new Date();
@@ -49,28 +49,35 @@ DebugLogArchivesCharacteristic.prototype.onWriteRequest = function(data, offset,
                       helper.uploadLogArchive(apiKey, zipFilePath, serverUrl, serverHost, function(status6) {
                         if (status6 == 'OK') {
                           console.log('DebugLogArchivesCharacteristic - uploadLogArchive status == OK');
+                          callback(thisObj.RESULT_SUCCESS);
                         } else {
                           console.log('DebugLogArchivesCharacteristic - uploadLogArchive status != OK');
+                          callback(thisObj.RESULT_UNLIKELY_ERROR);
                         }
                       });
                     } else {
                       console.log('DebugLogArchivesCharacteristic - getWebServerHost status != OK');
+                      callback(thisObj.RESULT_UNLIKELY_ERROR);
                     }
                   });
                 } else {
                   console.log('DebugLogArchivesCharacteristic - getWebServerUrl status != OK');
+                  callback(thisObj.RESULT_UNLIKELY_ERROR);
                 }
               });
             } else {
                console.log('DebugLogArchivesCharacteristic - getApiKey status != OK');
+               callback(thisObj.RESULT_UNLIKELY_ERROR);
             }
           });
         } else {
           console.log('DebugLogArchivesCharacteristic - zipLogArchive status != OK');
+          callback(thisObj.RESULT_UNLIKELY_ERROR);
         }
       });
     } else {
       console.log('DebugLogArchivesCharacteristic - getBTAddress status != OK');
+      callback(thisObj.RESULT_UNLIKELY_ERROR);
     }
   });
 };

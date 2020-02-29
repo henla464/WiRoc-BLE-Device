@@ -261,9 +261,9 @@ HttpHelper.getVersions = function(callback) {
 
 HttpHelper.setWiRocDeviceName = function(deviceName, callback) {
   console.log('HttpHelper - setWiRocDeviceName');
-  HttpHelper.getHttpGetResponse('/misc/wirocdevicename/' + deviceName + '/', function(status, body) {
-    var wirocDeviceName = (body == null ? '' : JSON.parse(body).WirocDeviceName)
-    callback(status, wirocDeviceName == null ? '' : wirocDeviceName);
+  HttpHelper.getHttpGetResponse('/misc/wirocdevicename/' + deviceName, function(status, body) {
+    var wiRocDeviceName = (body == null ? '' : JSON.parse(body).WiRocDeviceName)
+    callback(status, wiRocDeviceName == null ? '' : wiRocDeviceName);
   });
 };
 
