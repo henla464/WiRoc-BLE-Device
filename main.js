@@ -32,7 +32,9 @@ function startAdv() {
          if (deviceName == null) {
             deviceName = 'WiRoc Device';
          }
-         bleno.startAdvertising(deviceName, [radioConfigurationService.uuid]);
+         if (bleno.state === 'poweredOn') { // sometimes state has become powered off before reaching here
+         	bleno.startAdvertising(deviceName, [radioConfigurationService.uuid]);
+         }
        });
       }, 1000);
 }
@@ -44,6 +46,11 @@ bleno.on('stateChange', function(state) {
     startAdv();
   } else {
     bleno.stopAdvertising();
+    helper.startPatchAP6212(function (status) {
+      if (status == "OK") {
+        console.log('startPatchAP6212 OK');
+      }
+   });
   }
 });
 
