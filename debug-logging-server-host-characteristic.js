@@ -6,8 +6,8 @@ var bleno = require('@henla464/bleno');
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
 
-var MiscLoggingServerHostCharacteristic = function() {
-	MiscLoggingServerHostCharacteristic.super_.call(this, {
+var DebugLoggingServerHostCharacteristic = function() {
+	DebugLoggingServerHostCharacteristic.super_.call(this, {
     uuid: 'FB88090E-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     value: null,
@@ -29,14 +29,14 @@ var MiscLoggingServerHostCharacteristic = function() {
   this.loggingServerHost = null;
 };
 
-util.inherits(MiscLoggingServerHostCharacteristic, BlenoCharacteristic);
+util.inherits(DebugLoggingServerHostCharacteristic, BlenoCharacteristic);
 
-MiscLoggingServerHostCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscLoggingServerHostCharacteristic - onReadRequest offset ' + offset);
+DebugLoggingServerHostCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DebugLoggingServerHostCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
   if (offset == 0) {
     httphelper.getLoggingServerHost(function (status, loggingServerHost) {
-      console.log('MiscLoggingServerHostCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
+      console.log('DebugLoggingServerHostCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
       thisObj.loggingServerHost = new Buffer(loggingServerHost, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj.loggingServerHost);
@@ -56,12 +56,12 @@ MiscLoggingServerHostCharacteristic.prototype.onReadRequest = function(offset, c
 };
 
 
-MiscLoggingServerHostCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscLoggingServerHostCharacteristic - onWriteRequest');
+DebugLoggingServerHostCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DebugLoggingServerHostCharacteristic - onWriteRequest');
   var thisObj = this;
   var loggingServerHost = data.toString('utf-8')
   httphelper.setLoggingServerHost(ip, function(status, retLoggingServerHost) {
-    console.log('MiscLoggingServerHostCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retLoggingServerHost != null ? retLoggingServerHost : 'null'));
+    console.log('DebugLoggingServerHostCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retLoggingServerHost != null ? retLoggingServerHost : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);
     } else {
@@ -70,8 +70,8 @@ MiscLoggingServerHostCharacteristic.prototype.onWriteRequest = function(data, of
   });
 };
 
-MiscLoggingServerHostCharacteristic.prototype.disconnect = function(clientAddress) {
-	console.log('MiscLoggingServerHostCharacteristic - disconnect');
+DebugLoggingServerHostCharacteristic.prototype.disconnect = function(clientAddress) {
+	console.log('DebugLoggingServerHostCharacteristic - disconnect');
 }
 
-module.exports = MiscLoggingServerHostCharacteristic;
+module.exports = DebugLoggingServerHostCharacteristic;

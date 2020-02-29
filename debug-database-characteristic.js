@@ -7,10 +7,10 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscDatabaseCharacteristic = function() {
+var DebugDatabaseCharacteristic = function() {
 
 
-  MiscDatabaseCharacteristic.super_.call(this, {
+  DebugDatabaseCharacteristic.super_.call(this, {
     uuid: 'FB880906-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['write'],
     descriptors: [
@@ -29,16 +29,16 @@ var MiscDatabaseCharacteristic = function() {
   this.settings = null;
 };
 
-util.inherits(MiscDatabaseCharacteristic, Characteristic);
+util.inherits(DebugDatabaseCharacteristic, Characteristic);
 
 
-MiscDatabaseCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscDatabaseCharacteristic - onWriteRequest');
+DebugDatabaseCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DebugDatabaseCharacteristic - onWriteRequest');
   var thisObj = this;
   var operation = data.toString('utf-8')
   if (operation == "deletepunches") {
     httphelper.deletePunches(function(status, retWebServiceStatus) {
-      console.log('MiscDatabaseCharacteristic - onWriteRequest, delete punches: status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
+      console.log('DebugDatabaseCharacteristic - onWriteRequest, delete punches: status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
       if (status == 'OK' && retWebServiceStatus == 'OK') {
         callback(thisObj.RESULT_SUCCESS);
       } else {
@@ -53,7 +53,7 @@ MiscDatabaseCharacteristic.prototype.onWriteRequest = function(data, offset, wit
         callback(thisObj.RESULT_UNLIKELY_ERROR);
       } else {
             httphelper.dropAllTables(function(status, retWebServiceStatus) {
-              console.log('MiscDatabaseCharacteristic - onWriteRequest, drop tables: status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
+              console.log('DebugDatabaseCharacteristic - onWriteRequest, drop tables: status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
               if (status == 'OK' && retWebServiceStatus == 'OK') {
                 // start WiRoc-Python service
                 child2 = exec("systemctl start WiRocPython.service", function (error, stdout, stderr) {
@@ -77,4 +77,4 @@ MiscDatabaseCharacteristic.prototype.onWriteRequest = function(data, offset, wit
   }
 };
 
-module.exports = MiscDatabaseCharacteristic;
+module.exports = DebugDatabaseCharacteristic;

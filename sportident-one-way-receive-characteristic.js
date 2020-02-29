@@ -5,8 +5,8 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscOneWayReceiveCharacteristic = function() {
-	MiscOneWayReceiveCharacteristic.super_.call(this, {
+var SportIdentOneWayReceiveCharacteristic = function() {
+	SportIdentOneWayReceiveCharacteristic.super_.call(this, {
     uuid: 'FB880911-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     descriptors: [
@@ -24,13 +24,13 @@ var MiscOneWayReceiveCharacteristic = function() {
   });
 };
 
-util.inherits(MiscOneWayReceiveCharacteristic, Characteristic);
+util.inherits(SportIdentOneWayReceiveCharacteristic, Characteristic);
 
-MiscOneWayReceiveCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscOneWayReceiveCharacteristic - onReadRequest');
+SportIdentOneWayReceiveCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('SportIdentOneWayReceiveCharacteristic - onReadRequest');
   var thisObj = this;
   httphelper.getOneWayReceive(function (status, enabled) {
-    console.log('MiscOneWayReceiveCharacteristic - onReadRequest: status = "' + status + '" value = ' + (enabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    console.log('SportIdentOneWayReceiveCharacteristic - onReadRequest: status = "' + status + '" value = ' + (enabled != null ? (enabled ? 'True' : 'False') : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS, new Buffer([enabled ? 1 : 0]));
     } else {
@@ -39,12 +39,12 @@ MiscOneWayReceiveCharacteristic.prototype.onReadRequest = function(offset, callb
   });
 };
 
-MiscOneWayReceiveCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscOneWayReceiveCharacteristic - onWriteRequest');
+SportIdentOneWayReceiveCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('SportIdentOneWayReceiveCharacteristic - onWriteRequest');
   var thisObj = this;
   var enabled = data[0] == 1;
   httphelper.setOneWayReceive(enabled, function(status, retEnabled) {
-    console.log('MiscOneWayReceiveCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retEnabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    console.log('SportIdentOneWayReceiveCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retEnabled != null ? (enabled ? 'True' : 'False') : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);
     } else {
@@ -53,4 +53,4 @@ MiscOneWayReceiveCharacteristic.prototype.onWriteRequest = function(data, offset
   });
 };
 
-module.exports = MiscOneWayReceiveCharacteristic;
+module.exports = SportIdentOneWayReceiveCharacteristic;

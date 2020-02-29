@@ -5,8 +5,8 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscLogToServerCharacteristic = function() {
-	MiscLogToServerCharacteristic.super_.call(this, {
+var DebugLogToServerCharacteristic = function() {
+	DebugLogToServerCharacteristic.super_.call(this, {
     uuid: 'FB88090D-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     descriptors: [
@@ -24,13 +24,13 @@ var MiscLogToServerCharacteristic = function() {
   });
 };
 
-util.inherits(MiscLogToServerCharacteristic, Characteristic);
+util.inherits(DebugLogToServerCharacteristic, Characteristic);
 
-MiscLogToServerCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscLogToServerCharacteristic - onReadRequest');
+DebugLogToServerCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DebugLogToServerCharacteristic - onReadRequest');
   var thisObj = this;
   httphelper.getLogToServer(function (status, enabled) {
-    console.log('MiscLogToServerCharacteristic - onReadRequest: status = "' + status + '" value = ' + (enabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    console.log('DebugLogToServerCharacteristic - onReadRequest: status = "' + status + '" value = ' + (enabled != null ? (enabled ? 'True' : 'False') : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS, new Buffer([enabled ? 1 : 0]));
     } else {
@@ -39,12 +39,12 @@ MiscLogToServerCharacteristic.prototype.onReadRequest = function(offset, callbac
   });
 };
 
-MiscLogToServerCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscLogToServerCharacteristic - onWriteRequest');
+DebugLogToServerCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DebugLogToServerCharacteristic - onWriteRequest');
   var thisObj = this;
   var enabled = data[0] == 1;
   httphelper.setLogToServer(enabled, function(status, retEnabled) {
-    console.log('MiscLogToServerCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retEnabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    console.log('DebugLogToServerCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retEnabled != null ? (enabled ? 'True' : 'False') : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);
     } else {
@@ -53,4 +53,4 @@ MiscLogToServerCharacteristic.prototype.onWriteRequest = function(data, offset, 
   });
 };
 
-module.exports = MiscLogToServerCharacteristic;
+module.exports = DebugLogToServerCharacteristic;

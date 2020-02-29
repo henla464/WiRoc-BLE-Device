@@ -5,8 +5,8 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscForce4800BaudRateCharacteristic = function() {
-	MiscForce4800BaudRateCharacteristic.super_.call(this, {
+var SportIdentForce4800BaudRateCharacteristic = function() {
+	SportIdentForce4800BaudRateCharacteristic.super_.call(this, {
     uuid: 'FB880910-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     descriptors: [
@@ -24,13 +24,13 @@ var MiscForce4800BaudRateCharacteristic = function() {
   });
 };
 
-util.inherits(MiscForce4800BaudRateCharacteristic, Characteristic);
+util.inherits(SportIdentForce4800BaudRateCharacteristic, Characteristic);
 
-MiscForce4800BaudRateCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscForce4800BaudRateCharacteristic - onReadRequest');
+SportIdentForce4800BaudRateCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('SportIdentForce4800BaudRateCharacteristic - onReadRequest');
   var thisObj = this;
   httphelper.getForce4800BaudRate(function (status, enabled) {
-    console.log('MiscForce4800BaudRateCharacteristic - onReadRequest: status = "' + status + '" value = ' + (enabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    console.log('SportIdentForce4800BaudRateCharacteristic - onReadRequest: status = "' + status + '" value = ' + (enabled != null ? (enabled ? 'True' : 'False') : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS, new Buffer([enabled ? 1 : 0]));
     } else {
@@ -39,12 +39,12 @@ MiscForce4800BaudRateCharacteristic.prototype.onReadRequest = function(offset, c
   });
 };
 
-MiscForce4800BaudRateCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscForce4800BaudRateCharacteristic - onWriteRequest');
+SportIdentForce4800BaudRateCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('SportIdentForce4800BaudRateCharacteristic - onWriteRequest');
   var thisObj = this;
   var enabled = data[0] == 1;
   httphelper.setForce4800BaudRate(enabled, function(status, retEnabled) {
-    console.log('MiscForce4800BaudRateCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retEnabled != null ? (enabled ? 'True' : 'False') : 'null'));
+    console.log('SportIdentForce4800BaudRateCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retEnabled != null ? (enabled ? 'True' : 'False') : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);
     } else {
@@ -53,4 +53,4 @@ MiscForce4800BaudRateCharacteristic.prototype.onWriteRequest = function(data, of
   });
 };
 
-module.exports = MiscForce4800BaudRateCharacteristic;
+module.exports = SportIdentForce4800BaudRateCharacteristic;

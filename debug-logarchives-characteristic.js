@@ -7,10 +7,10 @@ var helper = require('./helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscLogArchivesCharacteristic = function() {
+var DebugLogArchivesCharacteristic = function() {
 
 
-  MiscLogArchivesCharacteristic.super_.call(this, {
+  DebugLogArchivesCharacteristic.super_.call(this, {
     uuid: 'FB88090B-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['write'],
     descriptors: [
@@ -29,10 +29,10 @@ var MiscLogArchivesCharacteristic = function() {
   this.settings = null;
 };
 
-util.inherits(MiscLogArchivesCharacteristic, Characteristic);
+util.inherits(DebugLogArchivesCharacteristic, Characteristic);
 
-MiscLogArchivesCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscLogArchivesCharacteristic - onWriteRequest');
+DebugLogArchivesCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DebugLogArchivesCharacteristic - onWriteRequest');
 
   helper.getBTAddress(function(status, btAddress) {
     if (status == 'OK') {
@@ -48,31 +48,31 @@ MiscLogArchivesCharacteristic.prototype.onWriteRequest = function(data, offset, 
                     if (status5 == 'OK') {
                       helper.uploadLogArchive(apiKey, zipFilePath, serverUrl, serverHost, function(status6) {
                         if (status6 == 'OK') {
-                          console.log('MiscLogArchivesCharacteristic - uploadLogArchive status == OK');
+                          console.log('DebugLogArchivesCharacteristic - uploadLogArchive status == OK');
                         } else {
-                          console.log('MiscLogArchivesCharacteristic - uploadLogArchive status != OK');
+                          console.log('DebugLogArchivesCharacteristic - uploadLogArchive status != OK');
                         }
                       });
                     } else {
-                      console.log('MiscLogArchivesCharacteristic - getWebServerHost status != OK');
+                      console.log('DebugLogArchivesCharacteristic - getWebServerHost status != OK');
                     }
                   });
                 } else {
-                  console.log('MiscLogArchivesCharacteristic - getWebServerUrl status != OK');
+                  console.log('DebugLogArchivesCharacteristic - getWebServerUrl status != OK');
                 }
               });
             } else {
-               console.log('MiscLogArchivesCharacteristic - getApiKey status != OK');
+               console.log('DebugLogArchivesCharacteristic - getApiKey status != OK');
             }
           });
         } else {
-          console.log('MiscLogArchivesCharacteristic - zipLogArchive status != OK');
+          console.log('DebugLogArchivesCharacteristic - zipLogArchive status != OK');
         }
       });
     } else {
-      console.log('MiscLogArchivesCharacteristic - getBTAddress status != OK');
+      console.log('DebugLogArchivesCharacteristic - getBTAddress status != OK');
     }
   });
 };
 
-module.exports = MiscLogArchivesCharacteristic;
+module.exports = DebugLogArchivesCharacteristic;

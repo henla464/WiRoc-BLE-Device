@@ -6,10 +6,10 @@ var exec = require('child_process').exec;
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscStatusCharacteristic = function() {
+var DeviceStatusStatusCharacteristic = function() {
 
 
-  MiscStatusCharacteristic.super_.call(this, {
+  DeviceStatusStatusCharacteristic.super_.call(this, {
     uuid: 'FB880903-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     descriptors: [
@@ -29,10 +29,10 @@ var MiscStatusCharacteristic = function() {
   statusMsg = null;
 };
 
-util.inherits(MiscStatusCharacteristic, Characteristic);
+util.inherits(DeviceStatusStatusCharacteristic, Characteristic);
 
-MiscStatusCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscStatusCharacteristic - onReadRequest offset ' + offset);
+DeviceStatusStatusCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DeviceStatusStatusCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
   if (thisObj.statusMsg == null || offset > thisObj.statusMsg.length) {
     result = this.RESULT_INVALID_OFFSET;
@@ -44,14 +44,14 @@ MiscStatusCharacteristic.prototype.onReadRequest = function(offset, callback) {
 };
 
 
-MiscStatusCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscStatusCharacteristic - onWriteRequest');
+DeviceStatusStatusCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DeviceStatusStatusCharacteristic - onWriteRequest');
   var thisObj = this;
   var offsetToUseStr = data.toString('utf-8');
   var offsetToUse = parseInt(offsetToUseStr);
   if (offsetToUse == 0) {
     httphelper.getStatus(function (status, statusMsg) {
-      console.log('MiscStatusCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (statusMsg != null ? statusMsg : 'null'));
+      console.log('DeviceStatusStatusCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (statusMsg != null ? statusMsg : 'null'));
       thisObj.statusMsg = new Buffer(statusMsg, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS);
@@ -70,4 +70,4 @@ MiscStatusCharacteristic.prototype.onWriteRequest = function(data, offset, witho
   }
 };
 
-module.exports = MiscStatusCharacteristic;
+module.exports = DeviceStatusStatusCharacteristic;

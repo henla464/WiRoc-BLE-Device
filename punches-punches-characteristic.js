@@ -6,8 +6,8 @@ var bleno = require('@henla464/bleno');
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
 
-var MiscPunchesCharacteristic = function() {
-	MiscPunchesCharacteristic.super_.call(this, {
+var PunchesPunchesCharacteristic = function() {
+	PunchesPunchesCharacteristic.super_.call(this, {
     uuid: 'FB880901-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['notify'],
     value: null,
@@ -32,10 +32,10 @@ var MiscPunchesCharacteristic = function() {
   this._maxValue = 20;
 };
 
-util.inherits(MiscPunchesCharacteristic, BlenoCharacteristic);
+util.inherits(PunchesPunchesCharacteristic, BlenoCharacteristic);
 
-MiscPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
-  console.log('MiscPunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize + ' ' + updateValueCallback);
+PunchesPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+  console.log('PunchesPunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize + ' ' + updateValueCallback);
   var thisObj = this;
   var keyAndValue = "SendToBlenoEnabled;1";
   httphelper.setSetting(keyAndValue, function(status, retSetting) {
@@ -50,16 +50,16 @@ MiscPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateV
   this._interval = setInterval(this.updatePunches.bind(this), 2000);
 };
 
-MiscPunchesCharacteristic.prototype.onUnsubscribe = function() {
-  console.log('MiscPunchesCharacteristic - onUnsubscribe');
+PunchesPunchesCharacteristic.prototype.onUnsubscribe = function() {
+  console.log('PunchesPunchesCharacteristic - onUnsubscribe');
   this.disconnect();
 };
 
-MiscPunchesCharacteristic.prototype.updatePunches = function() {
-  console.log('MiscPunchesCharacteristic - updatePunches');
+PunchesPunchesCharacteristic.prototype.updatePunches = function() {
+  console.log('PunchesPunchesCharacteristic - updatePunches');
     var thisObj = this;
     httphelper.getPunches(function (status, punches) {
-      console.log('MiscPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
+      console.log('PunchesPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
       if (status == 'OK') {
 	if (thisObj._updateValueCallback != null) {
 		punchesBuf =  new Buffer(punches, "utf-8");
@@ -81,8 +81,8 @@ MiscPunchesCharacteristic.prototype.updatePunches = function() {
     });
 }
 
-MiscPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
-	console.log('MiscPunchesCharacteristic - disconnect');
+PunchesPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
+	console.log('PunchesPunchesCharacteristic - disconnect');
 	clearInterval(this._interval);
 	this._updateValueCallback = null;
 	var thisObj = this;
@@ -96,4 +96,4 @@ MiscPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
 	});
 }
 
-module.exports = MiscPunchesCharacteristic;
+module.exports = PunchesPunchesCharacteristic;

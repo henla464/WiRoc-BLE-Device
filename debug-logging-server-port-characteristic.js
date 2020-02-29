@@ -6,8 +6,8 @@ var bleno = require('@henla464/bleno');
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
 
-var MiscLoggingServerPortCharacteristic = function() {
-	MiscLoggingServerPortCharacteristic.super_.call(this, {
+var DebugLoggingServerPortCharacteristic = function() {
+	DebugLoggingServerPortCharacteristic.super_.call(this, {
     uuid: 'FB88090F-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     value: null,
@@ -29,14 +29,14 @@ var MiscLoggingServerPortCharacteristic = function() {
   this.loggingServerPort = null;
 };
 
-util.inherits(MiscLoggingServerPortCharacteristic, BlenoCharacteristic);
+util.inherits(DebugLoggingServerPortCharacteristic, BlenoCharacteristic);
 
-MiscLoggingServerPortCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscLoggingServerPortCharacteristic - onReadRequest offset ' + offset);
+DebugLoggingServerPortCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DebugLoggingServerPortCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
   if (offset == 0) {
     httphelper.getLoggingServerPort(function (status, loggingServerPort) {
-      console.log('MiscLoggingServerPortCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
+      console.log('DebugLoggingServerPortCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
       thisObj.loggingServerPort = new Buffer(loggingServerPort, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj.loggingServerPort);
@@ -56,12 +56,12 @@ MiscLoggingServerPortCharacteristic.prototype.onReadRequest = function(offset, c
 };
 
 
-MiscLoggingServerPortCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscLoggingServerPortCharacteristic - onWriteRequest');
+DebugLoggingServerPortCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DebugLoggingServerPortCharacteristic - onWriteRequest');
   var thisObj = this;
   var loggingServerPort = data.toString('utf-8')
   httphelper.setLoggingServerPort(ip, function(status, retLoggingServerPort) {
-    console.log('MiscLoggingServerPortCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retLoggingServerPort != null ? retLoggingServerPort : 'null'));
+    console.log('DebugLoggingServerPortCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retLoggingServerPort != null ? retLoggingServerPort : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);
     } else {
@@ -70,8 +70,8 @@ MiscLoggingServerPortCharacteristic.prototype.onWriteRequest = function(data, of
   });
 };
 
-MiscLoggingServerPortCharacteristic.prototype.disconnect = function(clientAddress) {
-	console.log('MiscLoggingServerPortCharacteristic - disconnect');
+DebugLoggingServerPortCharacteristic.prototype.disconnect = function(clientAddress) {
+	console.log('DebugLoggingServerPortCharacteristic - disconnect');
 }
 
-module.exports = MiscLoggingServerPortCharacteristic;
+module.exports = DebugLoggingServerPortCharacteristic;

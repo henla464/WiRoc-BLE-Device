@@ -5,10 +5,10 @@ var exec = require('child_process').exec;
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MiscServiceCharacteristic = function() {
+var DeviceStatusServiceCharacteristic = function() {
 
 
-  MiscServiceCharacteristic.super_.call(this, {
+  DeviceStatusServiceCharacteristic.super_.call(this, {
     uuid: 'FB880905-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read'],
     descriptors: [
@@ -29,10 +29,10 @@ var MiscServiceCharacteristic = function() {
   _statusServiceBuffer = null;
 };
 
-util.inherits(MiscServiceCharacteristic, Characteristic);
+util.inherits(DeviceStatusServiceCharacteristic, Characteristic);
 
-MiscServiceCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscServiceCharacteristic - onReadRequest offset ' + offset);
+DeviceStatusServiceCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DeviceStatusServiceCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
   if (offset == 0) {
     thisObj._statusServices = [];
@@ -65,4 +65,4 @@ MiscServiceCharacteristic.prototype.onReadRequest = function(offset, callback) {
   }
 };
 
-module.exports = MiscServiceCharacteristic;
+module.exports = DeviceStatusServiceCharacteristic;
