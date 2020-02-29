@@ -6,8 +6,8 @@ var bleno = require('@henla464/bleno');
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
 
-var MiscDeviceNameCharacteristic = function() {
-	MiscDeviceNameCharacteristic.super_.call(this, {
+var DeviceStatusDeviceNameCharacteristic = function() {
+	DeviceStatusDeviceNameCharacteristic.super_.call(this, {
     uuid: 'FB88090A-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['read', 'write'],
     value: null,
@@ -29,14 +29,14 @@ var MiscDeviceNameCharacteristic = function() {
   this.deviceName = null;
 };
 
-util.inherits(MiscDeviceNameCharacteristic, BlenoCharacteristic);
+util.inherits(DeviceStatusDeviceNameCharacteristic, BlenoCharacteristic);
 
-MiscDeviceNameCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscDeviceNameCharacteristic - onReadRequest offset ' + offset);
+DeviceStatusDeviceNameCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('DeviceStatusDeviceNameCharacteristic - onReadRequest offset ' + offset);
   var thisObj = this;
   if (offset == 0) {
     httphelper.getWiRocDeviceName(function (status, deviceName) {
-      console.log('MiscDeviceNameCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
+      console.log('DeviceStatusDeviceNameCharacteristic - onReadRequest: status = "' + status + '" value = ' + (deviceName != null ? deviceName : 'null'));
       thisObj.deviceName = new Buffer(deviceName, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj.deviceName);
@@ -56,12 +56,12 @@ MiscDeviceNameCharacteristic.prototype.onReadRequest = function(offset, callback
 };
 
 
-MiscDeviceNameCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscDeviceNameCharacteristic - onWriteRequest');
+DeviceStatusDeviceNameCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('DeviceStatusDeviceNameCharacteristic - onWriteRequest');
   var thisObj = this;
   var deviceName = data.toString('utf-8')
   httphelper.setWiRocDeviceName(ip, function(status, retDeviceName) {
-    console.log('MiscDeviceNameCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retDeviceName != null ? retDeviceName : 'null'));
+    console.log('DeviceStatusDeviceNameCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retDeviceName != null ? retDeviceName : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);
     } else {
@@ -70,8 +70,8 @@ MiscDeviceNameCharacteristic.prototype.onWriteRequest = function(data, offset, w
   });
 };
 
-MiscDeviceNameCharacteristic.prototype.disconnect = function(clientAddress) {
-	console.log('MiscDeviceNameCharacteristic - disconnect');
+DeviceStatusDeviceNameCharacteristic.prototype.disconnect = function(clientAddress) {
+	console.log('DeviceStatusDeviceNameCharacteristic - disconnect');
 }
 
-module.exports = MiscDeviceNameCharacteristic;
+module.exports = DeviceStatusDeviceNameCharacteristic;
