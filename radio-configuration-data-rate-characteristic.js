@@ -13,7 +13,7 @@ var RadioConfigurationDataRateCharacteristic = function() {
       // User description
       new Descriptor({
         uuid: '2901',
-        value: 'Data rate, valid values: 146, 283, 586, 2148, 7032 bps'
+        value: ''  //Data rate, valid values: 146, 283, 586, 2148, 7032 bps
       }),
       // presentation format: 0x06=unsigned 16-bit, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
       new Descriptor({

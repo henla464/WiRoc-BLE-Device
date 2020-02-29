@@ -14,7 +14,7 @@ var BatteryLevelCharacteristic = function() {
       // User description
       new Descriptor({
         uuid: '2901',
-        value: 'Battery level between 0 and 100 percent'
+        value: '' //Battery level between 0 and 100 percent
       }),
       // presentation format: 0x04=unsigned 8-bit, 0x01=exponent 1, 0xAD 0x27=percentage, 0x01=namespace, 0x00 0x00 description
       new Descriptor({

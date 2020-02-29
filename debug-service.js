@@ -18,7 +18,6 @@ function DebugService() {
 	new DebugDebugCharacteristic(),
 	new DebugDatabaseCharacteristic(),
 	new DebugLogArchivesCharacteristic(),
-	new DebugUpgradeCharacteristic(),
 	new DebugLogToServerCharacteristic(),
 	new DebugLoggingServerHostCharacteristic(),
 	new DebugLoggingServerPortCharacteristic()

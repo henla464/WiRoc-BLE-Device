@@ -13,7 +13,7 @@ var MeosIPPortCharacteristic = function() {
       // User description
       new Descriptor({
         uuid: '2901',
-        value: 'Send to Meos IP port'
+        value: ''  //Send to Meos IP port
       }),
       // presentation format: 0x06=unsigned 16-bit, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
       new Descriptor({

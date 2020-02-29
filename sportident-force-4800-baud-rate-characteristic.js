@@ -13,7 +13,7 @@ var MiscForce4800BaudRateCharacteristic = function() {
       // User description
       new Descriptor({
         uuid: '2901',
-        value: 'Enable/Disable sending logs to server via http call'
+        value: ''  //Enable/Disable sending logs to server via http call
       }),
       // presentation format: 0x01=unsigned 1-bit (boolean), 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
       new Descriptor({

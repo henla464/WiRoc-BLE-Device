@@ -16,7 +16,7 @@ var DeviceStatusUpgradeCharacteristic = function() {
       // User description
       new Descriptor({
         uuid: '2901',
-        value: 'Upgrade wirocpython or wirocble'
+        value: ''  //Upgrade wirocpython or wirocble
       }),
       // presentation format: 0x19=utf8 string, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
       new Descriptor({
