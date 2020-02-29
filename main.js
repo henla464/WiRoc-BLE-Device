@@ -10,8 +10,8 @@ var RadioConfigurationService = require('./radio-configuration-service');
 var radioConfigurationService = new RadioConfigurationService();
 var MiscService = require('./misc-service');
 var miscService = new MiscService();
-var MeosService = require('./meos-service');
-var meosService = new MeosService();
+var SirapService = require('./sirap-service');
+var sirapService = new SirapService();
 var NetworkService = require('./network-service');
 var networkService = new NetworkService();
 var DeviceStatusService = require('./devicestatus-service');
@@ -62,7 +62,7 @@ bleno.on('advertisingStart', function(error) {
         batteryService,
         radioConfigurationService,
         miscService,
-	meosService,
+	sirapService,
 	networkService,
 	deviceStatusService,
 	debugService,

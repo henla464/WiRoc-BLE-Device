@@ -102,8 +102,8 @@ HttpHelper.setPower = function(power, callback) {
   });
 };
 
-HttpHelper.getSendToMeosEnabled = function(callback) {
-  console.log('HttpHelper - getSendToMeosEnabled');
+HttpHelper.getSendToSirapEnabled = function(callback) {
+  console.log('HttpHelper - getSendToSirapEnabled');
   HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosenabled/', function(status, body) {
     console.log(body);
     console.log(JSON.parse(body).SendToMeosEnabled);
@@ -111,39 +111,39 @@ HttpHelper.getSendToMeosEnabled = function(callback) {
   });
 };
 
-HttpHelper.setSendToMeosEnabled = function(enabled, callback) {
-  console.log('HttpHelper - setSendToMeosEnabled');
+HttpHelper.setSendToSirapEnabled = function(enabled, callback) {
+  console.log('HttpHelper - setSendToSirapEnabled');
   HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosenabled/' + enabled + '/', function(status, body) {
     callback(status, body == null ? null : JSON.parse(body).SendToMeosEnabled);
   });
 };
 
 
-HttpHelper.getSendToMeosIP = function(callback) {
-  console.log('HttpHelper - getSendToMeosIP');
+HttpHelper.getSendToSirapIP = function(callback) {
+  console.log('HttpHelper - getSendToSirapIP');
   HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosip/', function(status, body) {
-    var sendToMeosIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
-    callback(status, sendToMeosIP == null ? '' : sendToMeosIP);
+    var sendToSirapIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
+    callback(status, sendToSirapIP == null ? '' : sendToSirapIP);
   });
 };
 
-HttpHelper.setSendToMeosIP = function(ip, callback) {
-  console.log('HttpHelper - setSendToMeosIP');
+HttpHelper.setSendToSirapIP = function(ip, callback) {
+  console.log('HttpHelper - setSendToSirapIP');
   HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosip/' + ip + '/', function(status, body) {
-    var sendToMeosIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
-    callback(status, sendToMeosIP == null ? '' : sendToMeosIP);
+    var sendToSirapIP = (body == null ? '' : JSON.parse(body).SendToMeosIP)
+    callback(status, sendToSirapIP == null ? '' : sendToSirapIP);
   });
 };
 
-HttpHelper.getSendToMeosIPPort = function(callback) {
-  console.log('HttpHelper - getSendToMeosIPPort');
+HttpHelper.getSendToSirapIPPort = function(callback) {
+  console.log('HttpHelper - getSendToSirapIPPort');
   HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosipport/', function(status, body) {
     callback(status, body == null ? null : JSON.parse(body).SendToMeosIPPort);
   });
 };
 
-HttpHelper.setSendToMeosIPPort = function(port, callback) {
-  console.log('HttpHelper - setSendToMeosIPPort');
+HttpHelper.setSendToSirapIPPort = function(port, callback) {
+  console.log('HttpHelper - setSendToSirapIPPort');
   HttpHelper.getHttpGetResponse('/meosconfiguration/sendtomeosipport/' + port + '/', function(status, body) {
     callback(status, body == null ? null : JSON.parse(body).SendToMeosIPPort);
   });

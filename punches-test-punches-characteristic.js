@@ -6,8 +6,8 @@ var bleno = require('@henla464/bleno');
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
 
-var MiscTestPunchesCharacteristic = function() {
-	MiscTestPunchesCharacteristic.super_.call(this, {
+var PunchesTestPunchesCharacteristic = function() {
+	PunchesTestPunchesCharacteristic.super_.call(this, {
     uuid: 'FB880907-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['notify','read', 'write'],
     value: null,
@@ -43,22 +43,22 @@ var MiscTestPunchesCharacteristic = function() {
   this._shouldStopSending = false;
 };
 
-util.inherits(MiscTestPunchesCharacteristic, BlenoCharacteristic);
+util.inherits(PunchesTestPunchesCharacteristic, BlenoCharacteristic);
 
-MiscTestPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
-  console.log('MiscTestPunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize);
+PunchesTestPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+  console.log('PunchesTestPunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize);
   this._maxValue = Math.min(20, maxValueSize);
   this._updateValueCallback = updateValueCallback;
   this._interval = setInterval(this.updatePunches.bind(this), 3000);
   this._sendSingleFragmentInterval = setInterval(this.singleUpdatePunchesCall.bind(this), 250);
 };
 
-MiscTestPunchesCharacteristic.prototype.onUnsubscribe = function() {
-  console.log('MiscTestPunchesCharacteristic - onUnsubscribe');
+PunchesTestPunchesCharacteristic.prototype.onUnsubscribe = function() {
+  console.log('PunchesTestPunchesCharacteristic - onUnsubscribe');
   this.disconnect();
 };
 
-MiscTestPunchesCharacteristic.prototype.singleUpdatePunchesCall = function() {
+PunchesTestPunchesCharacteristic.prototype.singleUpdatePunchesCall = function() {
 	//console.log("singleUpdatePunchesCall");
 	if (this._punchesBuf == null) {
 		return;
@@ -82,13 +82,13 @@ MiscTestPunchesCharacteristic.prototype.singleUpdatePunchesCall = function() {
 	}
 }
 
-MiscTestPunchesCharacteristic.prototype.updatePunches = function() {
-    console.log('MiscTestPunchesCharacteristic - updatePunches');
+PunchesTestPunchesCharacteristic.prototype.updatePunches = function() {
+    console.log('PunchesTestPunchesCharacteristic - updatePunches');
     var includeAll = false;
     var thisObj = this;
     if (thisObj._punchesBuf == null) {
        	httphelper.getTestPunches(thisObj._testBatchGuid, includeAll, function (status, punches) {
-       		console.log('MiscTestPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
+       		console.log('PunchesTestPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
       		if (status == 'OK') {
 			if (thisObj._updateValueCallback != null && thisObj._punchesBuf == null) {  // check that we should send, and that previous data has been sent
 				tmpPunchesBuf =  new Buffer(punches, "utf-8");
@@ -105,8 +105,8 @@ MiscTestPunchesCharacteristic.prototype.updatePunches = function() {
     }
 }
 
-MiscTestPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
-	console.log('MiscTestPunchesCharacteristic - disconnect');
+PunchesTestPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
+	console.log('PunchesTestPunchesCharacteristic - disconnect');
 	clearInterval(this._interval);
 	this._interval = null;
 	clearInterval(this._addPunchInterval);
@@ -115,13 +115,13 @@ MiscTestPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
 	this._shouldStopSending = true;
 }
 
-MiscTestPunchesCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MiscTestPunchesCharacteristic - onReadRequest');
+PunchesTestPunchesCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('PunchesTestPunchesCharacteristic - onReadRequest');
   var includeAll = true;
   var thisObj = this;
   if (offset == 0) {
     httphelper.getTestPunches(this._testBatchGuid, includeAll, function (status, punches) {
-      console.log('MiscTestPunchesCharacteristic - onReadRequest: status = "' + status + '" value = ' + (punches != null ? punches : 'null'));
+      console.log('PunchesTestPunchesCharacteristic - onReadRequest: status = "' + status + '" value = ' + (punches != null ? punches : 'null'));
       thisObj._testPunchesRead = new Buffer(punches, "utf-8");
       if (status == 'OK') {
         callback(thisObj.RESULT_SUCCESS, thisObj._testPunchesRead);
@@ -140,18 +140,18 @@ MiscTestPunchesCharacteristic.prototype.onReadRequest = function(offset, callbac
   }
 };
 
-MiscTestPunchesCharacteristic.prototype.getNewGuid = function() {
+PunchesTestPunchesCharacteristic.prototype.getNewGuid = function() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
     return v.toString(16);
   });
 };
 
-MiscTestPunchesCharacteristic.prototype.addTestPunch = function(callback) {
+PunchesTestPunchesCharacteristic.prototype.addTestPunch = function(callback) {
   // add punch
   console.log("addTestPunch");
   httphelper.addTestPunch(this._testBatchGuid, this._siNo, function (status, addedPunch) {
-    console.log('MiscTestPunchesCharacteristic - addTestPunch: status = "' + status + '" value = ' + (addedPunch != null ? addedPunch : 'null'));
+    console.log('PunchesTestPunchesCharacteristic - addTestPunch: status = "' + status + '" value = ' + (addedPunch != null ? addedPunch : 'null'));
   });
 
   this._noOfPunchesAdded++;
@@ -162,8 +162,8 @@ MiscTestPunchesCharacteristic.prototype.addTestPunch = function(callback) {
   }
 };
 
-MiscTestPunchesCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MiscTestPunchesCharacteristic - onWriteRequest');
+PunchesTestPunchesCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('PunchesTestPunchesCharacteristic - onWriteRequest');
   var noOfPunchesAndIntervalAndSINo = data.toString('utf-8');
   this._noOfPunchesToAdd = parseInt(noOfPunchesAndIntervalAndSINo.split(';')[0]);
   this._noOfPunchesAdded = 0;
@@ -185,4 +185,4 @@ MiscTestPunchesCharacteristic.prototype.onWriteRequest = function(data, offset, 
   callback(this.RESULT_SUCCESS);
 };
 
-module.exports = MiscTestPunchesCharacteristic;
+module.exports = PunchesTestPunchesCharacteristic;

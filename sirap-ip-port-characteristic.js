@@ -5,15 +5,15 @@ var httphelper = require('./http-helper');
 var Descriptor = bleno.Descriptor;
 var Characteristic = bleno.Characteristic;
 
-var MeosIPPortCharacteristic = function() {
-	MeosIPPortCharacteristic.super_.call(this, {
+var SirapIPPortCharacteristic = function() {
+	SirapIPPortCharacteristic.super_.call(this, {
     uuid: '6E30B303-BE1B-401C-8A6D-1A59D5C23C64',
     properties: ['read', 'write'],
     descriptors: [
       // User description
       new Descriptor({
         uuid: '2901',
-        value: ''  //Send to Meos IP port
+        value: ''  //Send to Sirap IP port
       }),
       // presentation format: 0x06=unsigned 16-bit, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
       new Descriptor({
@@ -26,13 +26,13 @@ var MeosIPPortCharacteristic = function() {
 //  this._ipport = new Buffer([0x10, 0x27]);
 };
 
-util.inherits(MeosIPPortCharacteristic, Characteristic);
+util.inherits(SirapIPPortCharacteristic, Characteristic);
 
-MeosIPPortCharacteristic.prototype.onReadRequest = function(offset, callback) {
-  console.log('MeosIPPortCharacteristic - onReadRequest');
+SirapIPPortCharacteristic.prototype.onReadRequest = function(offset, callback) {
+  console.log('SirapIPPortCharacteristic - onReadRequest');
   var thisObj = this;
-  httphelper.getSendToMeosIPPort(function (status, port) {
-    console.log('MeosIPPortCharacteristic - onReadRequest: status = "' + status + '" value = ' + (port != null ? port : 'null'));
+  httphelper.getSendToSirapIPPort(function (status, port) {
+    console.log('SirapIPPortCharacteristic - onReadRequest: status = "' + status + '" value = ' + (port != null ? port : 'null'));
     var intPort = parseInt(port);
     if (status == 'OK') {
       var buf = new Buffer(2);
@@ -44,12 +44,12 @@ MeosIPPortCharacteristic.prototype.onReadRequest = function(offset, callback) {
   });
 };
 
-MeosIPPortCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
-  console.log('MeosIPPortCharacteristic - onWriteRequest');
+SirapIPPortCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
+  console.log('SirapIPPortCharacteristic - onWriteRequest');
   var thisObj = this;
   var ipPort = data.readUInt16LE();
-  httphelper.setSendToMeosIPPort(ipPort, function(status, retIPPort) {
-    console.log('MeosIPPortCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retIPPort != null ? retIPPort : 'null'));
+  httphelper.setSendToSirapIPPort(ipPort, function(status, retIPPort) {
+    console.log('SirapIPPortCharacteristic - onWriteRequest: status = "' + status + '" value = ' + (retIPPort != null ? retIPPort : 'null'));
     if (status == 'OK') {
       callback(thisObj.RESULT_SUCCESS);
     } else {
@@ -58,4 +58,4 @@ MeosIPPortCharacteristic.prototype.onWriteRequest = function(data, offset, witho
   });
 };
 
-module.exports = MeosIPPortCharacteristic;
+module.exports = SirapIPPortCharacteristic;
