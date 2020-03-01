@@ -49,6 +49,8 @@ bleno.on('stateChange', function(state) {
     helper.startPatchAP6212(function (status) {
       if (status == "OK") {
         console.log('startPatchAP6212 OK');
+      } else {
+        console.log('startPatchAP6212 error');
       }
    });
   }
@@ -102,6 +104,8 @@ if (bleno.state === 'poweredOn') {
    helper.startPatchAP6212(function (status) {
       if (status == "OK") {
         console.log('startPatchAP6212 OK');
+      } else {
+        console.log('startPatchAP6212 error');
       }
    });
 }
