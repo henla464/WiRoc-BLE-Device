@@ -1,5 +1,6 @@
 var exec = require('child_process').exec;
 var os = require("os");
+var sleep = require('sleep');
 
 var Helper = Helper || {}
 
@@ -172,13 +173,29 @@ Helper.startHCI = function(callback) {
 };
 
 Helper.startPatchAP6212 = function(callback) {
+  var hostname = os.hostname();
+  if (hostname != "nanopiair") {
+    callback("OK"); // only nanopiair needs patching
+  }
   var cmd = "systemctl start ap6212-bluetooth";
   console.log(cmd);
   exec(cmd, function(error, stdout, stderr) {
     if (error) {
-      console.log('Helper.startPatchAP6212: error code: "' + error + '"');
+      console.log('Helper.startPatchAP6212: First try. Error code: "' + error + '"');
       console.log(stderr);
-      callback('ERROR');
+      sleep.sleep(4);
+      exec(cmd, function(error, stdout, stderr) {
+        if (error) {
+          console.log('Helper.startPatchAP6212: Second/last try. Error code: "' + error + '"');
+          console.log(stderr);
+          callback('ERROR');
+        } else {
+          if (stdout.length > 0) {
+            console.log(stdout);
+          }
+          callback('OK');
+        }
+      });
     } else {
       if (stdout.length > 0) {
         console.log(stdout);
