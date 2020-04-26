@@ -81,9 +81,9 @@ bleno.on('advertisingStart', function(error) {
   if (!error) {
     bleno.setServices([
         batteryService,
-        radioConfigurationService,
+        //radioConfigurationService,
         miscService,
-	sirapService,
+	//sirapService,
 	networkService,
 	deviceStatusService,
 	debugService,

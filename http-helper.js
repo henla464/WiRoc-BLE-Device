@@ -354,7 +354,7 @@ HttpHelper.getSetProperty = function(propName, propValue, callback) {
   console.log('HttpHelper - getSetProperty');
   var uri = '/api/' + propName + '/';
   if (propValue != null && propValue.length > 0) {
-    uri += propValue + '/';
+    uri += propValue;
   }
   HttpHelper.getHttpGetResponse(uri, function(status, body) {
     callback(status, body == null ? null : propName + ';' + JSON.parse(body).Value);

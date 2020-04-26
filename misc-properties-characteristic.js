@@ -48,7 +48,7 @@ PropertiesCharacteristic.prototype.disconnect = function(clientAddress) {
 	console.log('PropertiesCharacteristic - disconnect');
 };
 
-PropertiesCharacteristic.prototype.sendProperties = function()
+PropertiesCharacteristic.prototype.sendProperties = function() {
   if (this._propertyNameAndValueString == null) {
     return;
   }
@@ -76,25 +76,30 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
   this._propertyNameAndValuesReadArr = [];
   this._propertyNameAndValuesToWriteArr = propertyNameAndValues.split('¤');
 
-  var callbackFunction = function (thisObj) {
-    return function(propertyNameAndValue) {
-      thisObj._propertyNameAndValuesReadArr.push(propertyNameAndValue);
-      if thisObj._propertyNameAndValuesReadArr.length >= thisObj._propertyNameAndValuesToWriteArr.length) {
-        // We have written all properties and received them back.
-        // => notify
-        thisObj._propertyNameAndValueString = thisObj._propertyNameAndValuesReadArr.join('¤');
-        thisObj._sendSingleFragmentInterval = setInterval(thisObj.sendProperties.bind(thisObj), 250);
-        callback(thisObj.RESULT_SUCCESS);
+  function callbackFunction(thisObj) {
+    return function(status, propertyNameAndValue) {
+      if (status == 'OK') {
+	thisObj._propertyNameAndValuesReadArr.push(propertyNameAndValue);
+        if (thisObj._propertyNameAndValuesReadArr.length >= thisObj._propertyNameAndValuesToWriteArr.length) {
+          // We have written all properties and received them back.
+          // => notify
+          thisObj._propertyNameAndValueString = thisObj._propertyNameAndValuesReadArr.join('¤');
+          thisObj._sendSingleFragmentInterval = setInterval(thisObj.sendProperties.bind(thisObj), 250);
+          callback(thisObj.RESULT_SUCCESS);
+        }
+      } else {
+          callback(thisObj.RESULT_UNLIKELY_ERROR);
       }
     };
-  }(this);
+  };
+  var callbackFunctionInitialized = callbackFunction(this);
 
   this._propertyNameAndValuesToWriteArr.forEach(propAndValue => {
     console.log(propAndValue);
     propAndValArr = propAndValue.split(';');
     var propName = propAndValArr[0];
     var propValue = propAndValArr[1];
-    HttpHelper.getSetProperty(propertyName, propertyValue, callbackFunction);
+    httphelper.getSetProperty(propName, propValue, callbackFunctionInitialized);
   });
   //callback(this.RESULT_SUCCESS);
 };
