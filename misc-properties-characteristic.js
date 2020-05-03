@@ -1,6 +1,7 @@
 var util = require('util');
 var httphelper = require('./http-helper');
 
+
 var bleno = require('@henla464/bleno');
 
 var Descriptor = bleno.Descriptor;
@@ -15,7 +16,7 @@ var PropertiesCharacteristic = function() {
 	// User description
 	new Descriptor({
 	  uuid: '2901',
-	  value: ''  //Write a new property value, or read one
+	  value: 'Write a new property value, or read one'
 	}),
 	// presentation format: 0x19=utf8, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
 	new Descriptor({
@@ -29,6 +30,8 @@ var PropertiesCharacteristic = function() {
 	 
   this._updateValueCallback = null;
   this._maxValue = 20;
+  this._propertyNameAndValuesToWriteArr = [];
+  this._propertyNameAndValuesReadArr = [];
 };
 
 util.inherits(PropertiesCharacteristic, BlenoCharacteristic);
@@ -49,41 +52,47 @@ PropertiesCharacteristic.prototype.disconnect = function(clientAddress) {
 };
 
 PropertiesCharacteristic.prototype.sendProperties = function() {
-  if (this._propertyNameAndValueString == null) {
+  if (this._propertyNameAndValueBuf == null) {
     return;
   }
 
-  var tmpBuf = this._propertyNameAndValueString.slice(0,this._maxValue);
+  var tmpBuf = this._propertyNameAndValueBuf.slice(0,this._maxValue);
   console.log("properties fragment: " + tmpBuf.toString('utf8'));
   this._updateValueCallback(tmpBuf);
-  if (this._propertyNameAndValueString.length > this._maxValue) {
-    this._propertyNameAndValueString = this._propertyNameAndValueString.slice(this._maxValue)
+  if (this._propertyNameAndValueBuf.length > this._maxValue) {
+    this._propertyNameAndValueBuf = this._propertyNameAndValueBuf.slice(this._maxValue)
   } else {
-    if (this._propertyNameAndValueString.length == this._maxValue) {
+    if (this._propertyNameAndValueBuf.length == this._maxValue) {
       var tmpBuf2 =  new Buffer(" ", "utf-8");
       console.log("properties fragment: (space)");
       this._updateValueCallback(tmpBuf2);
     }
     clearInterval(this._sendSingleFragmentInterval);
     this._sendSingleFragmentInterval = null;
-    this._propertyNameAndValueString = null;
+    this._propertyNameAndValueBuf = null;
   }
 };
 
 PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('PropertiesCharacteristic - onWriteRequest');
+  // extend the array or properties to read or write
   var propertyNameAndValues = data.toString('utf-8');
-  this._propertyNameAndValuesReadArr = [];
-  this._propertyNameAndValuesToWriteArr = propertyNameAndValues.split('¤');
+  var thisFnCallPropertyNameAndValuesToWriteArr = propertyNameAndValues.split('|');
+  this._propertyNameAndValuesToWriteArr.push.apply(this._propertyNameAndValuesToWriteArr, propertyNameAndValues.split('|'));
 
   function callbackFunction(thisObj) {
     return function(status, propertyNameAndValue) {
       if (status == 'OK') {
 	thisObj._propertyNameAndValuesReadArr.push(propertyNameAndValue);
         if (thisObj._propertyNameAndValuesReadArr.length >= thisObj._propertyNameAndValuesToWriteArr.length) {
-          // We have written all properties and received them back.
+          // We have read/written all properties and received response back.
           // => notify
-          thisObj._propertyNameAndValueString = thisObj._propertyNameAndValuesReadArr.join('¤');
+          var propertyNameAndValueString = thisObj._propertyNameAndValuesReadArr.join('|');
+          thisObj._propertyNameAndValuesReadArr = [];
+          thisObj._propertyNameAndValuesToWriteArr = [];
+          // block if transfer in progress?
+          //for (;thisObj._sendSingleFragmentInterval != null;) {}
+          thisObj._propertyNameAndValueBuf = new Buffer(propertyNameAndValueString, "utf-8");
           thisObj._sendSingleFragmentInterval = setInterval(thisObj.sendProperties.bind(thisObj), 250);
           callback(thisObj.RESULT_SUCCESS);
         }
@@ -94,7 +103,7 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
   };
   var callbackFunctionInitialized = callbackFunction(this);
 
-  this._propertyNameAndValuesToWriteArr.forEach(propAndValue => {
+  thisFnCallPropertyNameAndValuesToWriteArr.forEach(propAndValue => {
     console.log(propAndValue);
     propAndValArr = propAndValue.split(';');
     var propName = propAndValArr[0];

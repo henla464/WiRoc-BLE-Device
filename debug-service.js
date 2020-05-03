@@ -4,7 +4,6 @@ var bleno = require('@henla464/bleno');
 
 var BlenoPrimaryService = bleno.PrimaryService;
 
-var DebugDebugCharacteristic = require('./debug-debug-characteristic');
 var DebugDatabaseCharacteristic = require('./debug-database-characteristic');
 var DebugLogArchivesCharacteristic = require('./debug-logarchives-characteristic');
 var DebugLogToServerCharacteristic = require('./debug-log-to-server-characteristic');
@@ -15,7 +14,6 @@ function DebugService() {
 	DebugService.super_.call(this, {
       uuid: 'A0A5A3C7-1A36-4EBE-B293-953CF7126E56',
       characteristics: [
-	new DebugDebugCharacteristic(),
 	new DebugDatabaseCharacteristic(),
 	new DebugLogArchivesCharacteristic(),
 	new DebugLogToServerCharacteristic(),

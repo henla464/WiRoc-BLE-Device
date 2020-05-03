@@ -1,6 +1,7 @@
 var exec = require('child_process').exec;
 var os = require("os");
 var sleep = require('sleep');
+var httphelper = require('./http-helper');
 
 var Helper = Helper || {}
 
@@ -41,6 +42,77 @@ Helper.getIP = function(callback) {
   });
 };
 
+Helper.getIP2 = function(commandName, callback) {
+  var cmd = "hostname -I";
+  //console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+    if (error) {
+      console.log('error code: "' + error + '"');
+      console.log(stderr);
+      callback('ERROR', commandName + ';' + stderr);
+    }
+    stdout = stdout.trim();
+    callback('OK', commandName + ';' + stdout);
+  });
+};
+
+Helper.renewIP = function(commandName, commandValue, callback) {
+  var cmd = "nmcli -m multiline -f device,type device status";
+  //console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+     if (error) {
+       console.log('error code: "' + error + '"');
+       console.log(stderr);
+       callback('ERROR', commandName);
+     }
+     var devices = stdout.split(/\r?\n/).slice(0,-1); // remove last empty element
+     devices = devices.map(function(s) { return s.slice(40).trim() });
+     for (var i = 0; i < devices.length; i+=2) {
+       var iface = devices[i];
+       var ifaceNetworkType = devices[i+1];
+       if (commandValue == ifaceNetworkType){
+         var cmd2 = "dhclient -v -1 " + iface + "";
+         console.log(cmd2);
+         exec(cmd2, function(error2, stdout2, stderr2) {
+           if (error2) {
+             console.log('error code: "' + error2 + '"');
+             console.log(stderr2);
+             callback('ERROR', commandName);
+             return;
+           } else {
+             console.log(stdout2);
+             callback('OK', commandName);
+           }
+         });
+         return;
+       }
+     }
+     callback('ERROR', commandName);
+  });
+};
+
+
+Helper.getServices = function(commandName, callback) {
+    var statusServices = [];
+    var statusServiceBuffer = null;
+    var cmd = "systemctl is-active WiRocPython.service";
+    exec(cmd, function(error, stdout, stderr) {
+      statusServices.push({ Name: 'WiRocPython', Status: stdout.trim('\n') });
+      var cmd = "systemctl is-active WiRocPythonWS.service";
+      exec(cmd, function(error, stdout, stderr) {
+        statusServices.push({ Name: 'WiRocPythonWS', Status: stdout.trim('\n') });
+        var cmd = "systemctl is-active blink.service";
+        exec(cmd, function(error, stdout, stderr) {
+           statusServices.push({ Name: 'WiRocMonitor', Status: stdout.trim('\n') });
+           jsonStr = JSON.stringify({ services: statusServices });
+           statusServiceBuffer = new Buffer(jsonStr, "utf-8");
+           console.log(jsonStr);
+           callback('OK', commandName + ';' + statusServiceBuffer);
+        });
+      });
+    });
+};
+
 Helper.getBTAddress = function(callback) {
   var cmd = "hcitool dev";
   //console.log(cmd);
@@ -58,6 +130,156 @@ Helper.getBTAddress = function(callback) {
          btAddress = stdoutWords[1]
       }
       callback('OK', btAddress);
+    }
+  });
+};
+
+Helper.getListWifi = function(commandName, callback) {
+  // Get new wifi list
+  var cmd = 'nmcli -m multiline -f ssid,active,signal device wifi list';
+  exec(cmd, function(error, stdout, stderr) {
+    var wifiNetworks = stdout.split(/\r?\n/).slice(0,-1); // remove last empty element
+    wifiNetworks = wifiNetworks.map(function(s) { return s.slice(40).trim() });
+    var wifiDataList = wifiNetworks.join('\n');
+    callback('OK', commandName + ';' + wifiDataList);
+  });
+};
+
+Helper.connectWifi = function(commandName, commandValue, callback) {
+  var hostname = os.hostname();
+  var wlanIFace = 'wlan0';
+  if (hostname.toLowerCase() != 'chip') {
+    wlanIFace = 'wlp2s0';
+  }
+  
+  var wifiName = commandValue.split(/\r?\n/)[0];
+  var wifiPassword = commandValue.split(/\r?\n/)[1];
+  var cmd = "nmcli device wifi connect '" + wifiName + "' password '" + wifiPassword + "' ifname " + wlanIFace;
+  console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+     if (error) {
+       console.log('error code: "' + error + '"');
+       console.log(stderr);
+       callback('ERROR',commandName + ';' + stderr);
+     }
+     console.log(stdout);
+     callback('OK', commandName + ';CONNECTED');
+  });
+};
+
+Helper.disconnectWifi = function(commandName, callback) {
+  var hostname = os.hostname();
+  var wlanIFace = 'wlan0';
+  if (hostname.toLowerCase() != 'chip') {
+    wlanIFace = 'wlp2s0';
+  }
+  
+  var cmd = "nmcli device disconnect " + wlanIFace;
+  console.log(cmd);
+  exec(cmd, function(error, stdout, stderr) {
+     if (error) {
+       console.log('error code: "' + error + '"');
+       console.log(stderr);
+       callback('ERROR', commandName + ';' + stderr);
+     }
+     console.log(stdout);
+     callback('OK', commandName + ';DISCONNECTED');
+  });
+};
+
+Helper.dropAllTables = function(commandName, callback) {
+  // stop WiRoc-Python service
+  var child = exec("systemctl stop WiRocPython.service", function (error, stdout, stderr) {
+    if (error !== null) {
+      console.log('exec error: ' + error);
+      callback('ERROR', commandName + ';' + error);
+    } else {
+      httphelper.dropAllTables(function(status, retWebServiceStatus) {
+        console.log('Helper.dropAllTables - status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
+        if (status == 'OK' && retWebServiceStatus == 'OK') {
+          // start WiRoc-Python service
+          child2 = exec("systemctl start WiRocPython.service", function (error, stdout, stderr) {
+            if (error !== null) {
+              callback('ERROR', commandName + ';' + error);
+            } else {
+              callback('OK', commandName);
+            }
+          });
+        } else {
+           // start WiRoc-Python service
+           child2 = exec("systemctl start WiRocPython.service", function (error, stdout, stderr) {
+             callback('ERROR', commandName + ';');
+           });
+        }
+      });
+    }
+  });
+};
+
+Helper.uploadLogArchive = function(commandName, callback) {
+  console.log('Helper.uploadLogArchive');
+  helper.getBTAddress(function(status, btAddress) {
+    if (status == 'OK') {
+      var dateNow = new Date();
+      var zipFilePath = helper.getZipFilePath(btAddress, dateNow);
+      Helper.zipLogArchive(zipFilePath, function(status2) {
+        if (status2 == 'OK') {
+          httphelper.getApiKey(function(status3, apiKey) {
+            if (status3 == 'OK') {
+              httphelper.getWebServerUrl(function(status4, serverUrl) {
+                if (status4 == 'OK') {
+                  httphelper.getWebServerHost(function(status5, serverHost) {
+                    if (status5 == 'OK') {
+                      Helper.uploadLogArchive(apiKey, zipFilePath, serverUrl, serverHost, function(status6) {
+                        if (status6 == 'OK') {
+                          console.log('Helper.uploadLogArchive - uploadLogArchive status == OK');
+                          callback('OK', commandName);
+                        } else {
+                          console.log('Helper.uploadLogArchive - uploadLogArchive status != OK');
+                          callback('ERROR', commandName + ';uploadLogArchive');
+                        }
+                      });
+                    } else {
+                      console.log('Helper.uploadLogArchive - getWebServerHost status != OK');
+                      callback('ERROR', commandName + ';getWebServerHost');
+                    }
+                  });
+                } else {
+                  console.log('Helper.uploadLogArchive - getWebServerUrl status != OK');
+                  callback('ERROR', commandName + ';getWebServerUrl');
+                }
+              });
+            } else {
+               console.log('Helper.uploadLogArchive - getApiKey status != OK');
+               callback('ERROR', commandName + ';getApiKey');
+            }
+          });
+        } else {
+          console.log('Helper.uploadLogArchive - zipLogArchive status != OK');
+          callback('ERROR', commandName + ';zipLogArchive');
+        }
+      });
+    } else {
+      console.log('Helper.uploadLogArchive - getBTAddress status != OK');
+      callback('ERROR', commandName + ';getBTAddress');
+    }
+  });
+};
+
+Helper.upgradeWiRocPython = function(commandName, commandValue, callback) {
+  console.log('Helper.upgradeWiRocPython - wirocpython, version: ' + commandValue);
+  helper.upgradeWiRocPython(commandValue, function (status) {
+    if (status == "OK") {
+      callback('OK', commandName);
+    }
+  });
+};
+
+Helper.upgradeWiRocBLE = function(commandName, commandValue, callback) {
+  console.log('Helper.upgradeWiRocBLE - wirocble, version: ' + commandValue);
+  helper.upgradeWiRocBLE(commandValue, function (status) {
+    if (status == "OK") {
+      callback('OK', commandName);
     }
   });
 };
@@ -202,6 +424,23 @@ Helper.startPatchAP6212 = function(callback) {
       }
       callback('OK');
     }
+  });
+};
+
+Helper.getAll = function(commandName, callback) {
+  console.log('HttpHelper - getAll');
+  httphelper.getHttpGetResponse('/api/all/', function(status, body) {
+    if (status != 'OK') { callback(status, commandName); return;}
+    var all = (body == null ? null : JSON.parse(body).All);
+    Helper.getBatteryLevel(function(status, intPercent) {
+      if (status != 'OK') { callback(status, commandName); return;}
+      Helper.getIP2('getip', function(status, data) {
+        if (status != 'OK') { callback(status, commandName + ';' + data); return;}
+        var ipAddress = data.split(';')[1];
+        all = all.replace('%ipAddress%', ipAddress).replace('%batteryPercent%', intPercent);
+        callback(status, commandName + ';' + all);
+      });
+    });
   });
 };
 

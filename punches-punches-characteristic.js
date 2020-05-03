@@ -15,7 +15,7 @@ var PunchesPunchesCharacteristic = function() {
 	// User description
 	new Descriptor({
 	  uuid: '2901',
-	  value: ''  //Sends out the punch data
+	  value: 'Sends out the punch data'
 	}),
 	// presentation format: 0x19=utf8, 0x01=exponent 1, 0x00 0x27=unit less, 0x01=namespace, 0x00 0x00 description
 	new Descriptor({
@@ -37,13 +37,14 @@ util.inherits(PunchesPunchesCharacteristic, BlenoCharacteristic);
 PunchesPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
   console.log('PunchesPunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize + ' ' + updateValueCallback);
   var thisObj = this;
-  var keyAndValue = "SendToBlenoEnabled;1";
-  httphelper.setSetting(keyAndValue, function(status, retSetting) {
-    if (status == 'OK') {
-      console.log('SendToBlenoEnabled OK');
-    } else {
-      console.log('SendToBlenoEnabled Error');
-    }
+  var propName = 'sendtoblenoenabled';
+  var propValue = '1';
+  httphelper.getSetProperty(propName, propValue, function(status, propertyNameAndValue) {
+      if (status == 'OK') {
+	console.log('sendtoblenoenabled OK');
+      } else {
+        console.log('sendtoblenoenabled Error');
+      }
   });
   this._maxValue = Math.min(20, maxValueSize);
   this._updateValueCallback = updateValueCallback;
@@ -57,43 +58,45 @@ PunchesPunchesCharacteristic.prototype.onUnsubscribe = function() {
 
 PunchesPunchesCharacteristic.prototype.updatePunches = function() {
   console.log('PunchesPunchesCharacteristic - updatePunches');
-    var thisObj = this;
-    httphelper.getPunches(function (status, punches) {
-      console.log('PunchesPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
-      if (status == 'OK') {
-	if (thisObj._updateValueCallback != null) {
-		punchesBuf =  new Buffer(punches, "utf-8");
-		if (punchesBuf.length < 20) {
-			return; // no punches to return
-		}
-		for(var i = 0; i < punchesBuf.length; i+= thisObj._maxValue) {
-	      		var tmpBuf = punchesBuf.slice(i,i+thisObj._maxValue);
-			thisObj._updateValueCallback(tmpBuf);
-		}
-		if (punchesBuf.length % thisObj._maxValue == 0) { // send space at end to indicate end of transmission if last transmission is full length
-			var tmpBuf2 =  new Buffer(" ", "utf-8");
-			thisObj._updateValueCallback(tmpBuf2);
-		}
+  var thisObj = this;
+  httphelper.getSetProperty('punches', null, function(status, propertyNameAndValue) {
+    var punches = propertyNameAndValue.substring('punches'.length+1);
+    console.log('PunchesPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
+    if (status == 'OK') {
+      if (thisObj._updateValueCallback != null) {
+        punchesBuf =  new Buffer(punches, "utf-8");
+	if (punchesBuf.length < 20) {
+	  return; // no punches to return
 	}
-      } else {
-        console.log('Error status != OK');
+	for(var i = 0; i < punchesBuf.length; i+= thisObj._maxValue) {
+	  var tmpBuf = punchesBuf.slice(i,i+thisObj._maxValue);
+	  thisObj._updateValueCallback(tmpBuf);
+	}
+	if (punchesBuf.length % thisObj._maxValue == 0) { // send space at end to indicate end of transmission if last transmission is full length
+	  var tmpBuf2 =  new Buffer(" ", "utf-8");
+	  thisObj._updateValueCallback(tmpBuf2);
+	}
       }
-    });
+    } else {
+      console.log('Error status != OK');
+    }
+  });
 }
 
 PunchesPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
-	console.log('PunchesPunchesCharacteristic - disconnect');
-	clearInterval(this._interval);
-	this._updateValueCallback = null;
-	var thisObj = this;
-	var keyAndValue = "SendToBlenoEnabled;0";
-	httphelper.setSetting(keyAndValue, function(status, retSetting) {
-	  if (status == 'OK') {
-	    console.log('SendToBlenoEnabled Disabled OK');
-	  } else {
-	    console.log('SendToBlenoEnabled Disabled Error');
-	  }
-	});
+  console.log('PunchesPunchesCharacteristic - disconnect');
+  clearInterval(this._interval);
+  this._updateValueCallback = null;
+  var thisObj = this;
+  var propName = 'sendtoblenoenabled';
+  var propValue = '0';
+  httphelper.getSetProperty(propName, propValue, function(status, propertyNameAndValue) {
+    if (status == 'OK') {
+      console.log('sendtoblenoenabled Disabled OK');
+    } else {
+      console.log('sendtoblenoenabled Disabled Error');
+    }
+  });	
 }
 
 module.exports = PunchesPunchesCharacteristic;

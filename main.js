@@ -10,24 +10,16 @@ var RadioConfigurationService = require('./radio-configuration-service');
 var radioConfigurationService = new RadioConfigurationService();
 var MiscService = require('./misc-service');
 var miscService = new MiscService();
-var SirapService = require('./sirap-service');
-var sirapService = new SirapService();
-var NetworkService = require('./network-service');
-var networkService = new NetworkService();
-var DeviceStatusService = require('./devicestatus-service');
-var deviceStatusService = new DeviceStatusService();
-var DebugService = require('./debug-service');
-var debugService = new DebugService();
-var SportIdentService = require('./sportident-service');
-var sportIdentService = new SportIdentService();
 var PunchesService = require('./punches-service');
 var punchesService = new PunchesService();
 
 console.log('bleno - echo');
 
+
 function startAdv() {
-  setTimeout(function() {  
-    httphelper.getWiRocDeviceName(function (status, deviceName) {
+  setTimeout(function() {
+    httphelper.getSetProperty('wirocdevicename', null, function (status, propNameAndDeviceName) {
+      var deviceName = propNameAndDeviceName.split(';')[1];
       console.log('WiRocDeviceName: ' + (deviceName != null ? deviceName : 'null') + ' Status: ' + status);
       if (deviceName == null) {
         deviceName = 'WiRoc Device';
@@ -69,7 +61,7 @@ bleno.on('stateChange', function(state) {
         console.log('startPatchAP6212 OK');
       } else {
         console.log('startPatchAP6212 error');
-        throw new Error('startPatchAP6212 error'); 
+        throw new Error('startPatchAP6212 error');
       }
     });
   }
@@ -81,13 +73,7 @@ bleno.on('advertisingStart', function(error) {
   if (!error) {
     bleno.setServices([
         batteryService,
-        //radioConfigurationService,
         miscService,
-	//sirapService,
-	networkService,
-	deviceStatusService,
-	debugService,
-	sportIdentService,
 	punchesService
       ], function(error) {
         console.log('setServices: '  + (error ? 'error ' + error : 'success'));
@@ -103,7 +89,7 @@ bleno.on('advertisingStop', function() {
 
 bleno.on('accept', function(clientAddress) {
   console.log('Connect from: ' + clientAddress);
-  bleno.stopAdvertising();	
+  bleno.stopAdvertising();
 });
 
 
@@ -115,13 +101,27 @@ bleno.on('disconnect', function() {
 if (bleno.state === 'poweredOn') {
   restartHCIAndStartAdv();
 } else {
-  helper.startPatchAP6212(function (status) {
+  helper.stopHCI(function (status) {
     if (status == "OK") {
-      console.log('startPatchAP6212 OK');
+      console.log('StopHCI OK');
     } else {
-      console.log('startPatchAP6212 error');
-      throw new Error('startPatchAP6212 error'); 
+      console.log('StopHCI Error: ' + status);
     }
+    helper.startHCI(function (status) {
+      if (status == "OK") {
+        console.log('StartHCI OK');
+      } else {
+        console.log('StartHCI Error: ' + status);
+      }
+      helper.startPatchAP6212(function (status) {
+        if (status == "OK") {
+          console.log('startPatchAP6212 OK');
+        } else {
+          console.log('startPatchAP6212 error');
+          throw new Error('startPatchAP6212 error');
+        }
+      });
+    });
   });
 }
 
