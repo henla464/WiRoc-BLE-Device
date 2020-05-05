@@ -27,11 +27,12 @@ var PropertiesCharacteristic = function() {
   });
 
   bleno.on('disconnect', this.disconnect.bind(this));
-	 
+
   this._updateValueCallback = null;
   this._maxValue = 20;
   this._propertyNameAndValuesToWriteArr = [];
   this._propertyNameAndValuesReadArr = [];
+  this._queuePropertyNameAndValueBuf = [];
 };
 
 util.inherits(PropertiesCharacteristic, BlenoCharacteristic);
@@ -52,24 +53,24 @@ PropertiesCharacteristic.prototype.disconnect = function(clientAddress) {
 };
 
 PropertiesCharacteristic.prototype.sendProperties = function() {
-  if (this._propertyNameAndValueBuf == null) {
+  if (this._queuePropertyNameAndValueBuf.length == 0) {
+    clearInterval(this._sendSingleFragmentInterval);
+    this._sendSingleFragmentInterval = null;
     return;
   }
 
-  var tmpBuf = this._propertyNameAndValueBuf.slice(0,this._maxValue);
+  var tmpBuf = this._queuePropertyNameAndValueBuf[0].slice(0,this._maxValue);
   console.log("properties fragment: " + tmpBuf.toString('utf8'));
   this._updateValueCallback(tmpBuf);
-  if (this._propertyNameAndValueBuf.length > this._maxValue) {
-    this._propertyNameAndValueBuf = this._propertyNameAndValueBuf.slice(this._maxValue)
+  if (this._queuePropertyNameAndValueBuf[0].length > this._maxValue) {
+    this._queuePropertyNameAndValueBuf[0] = this._queuePropertyNameAndValueBuf[0].slice(this._maxValue)
   } else {
-    if (this._propertyNameAndValueBuf.length == this._maxValue) {
+    if (this._queuePropertyNameAndValueBuf[0].length == this._maxValue) {
       var tmpBuf2 =  new Buffer(" ", "utf-8");
       console.log("properties fragment: (space)");
       this._updateValueCallback(tmpBuf2);
     }
-    clearInterval(this._sendSingleFragmentInterval);
-    this._sendSingleFragmentInterval = null;
-    this._propertyNameAndValueBuf = null;
+    this._queuePropertyNameAndValueBuf.shift();
   }
 };
 
@@ -92,8 +93,9 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
           thisObj._propertyNameAndValuesToWriteArr = [];
           // block if transfer in progress?
           //for (;thisObj._sendSingleFragmentInterval != null;) {}
-          thisObj._propertyNameAndValueBuf = new Buffer(propertyNameAndValueString, "utf-8");
-          thisObj._sendSingleFragmentInterval = setInterval(thisObj.sendProperties.bind(thisObj), 250);
+          //thisObj._propertyNameAndValueBuf = new Buffer(propertyNameAndValueString, "utf-8");
+          thisObj._queuePropertyNameAndValueBuf.push(new Buffer(propertyNameAndValueString, "utf-8"));
+          thisObj._sendSingleFragmentInterval = setInterval(thisObj.sendProperties.bind(thisObj), 50);
           callback(thisObj.RESULT_SUCCESS);
         }
       } else {

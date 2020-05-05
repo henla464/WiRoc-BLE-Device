@@ -45,36 +45,6 @@ HttpHelper.addTestPunch = function(testBatchGuid, siNo, callback) {
   });
 };
 
-HttpHelper.getApiKey = function(callback) {
-  console.log('HttpHelper - getApiKey');
-  HttpHelper.getHttpGetResponse('/misc/apikey/', function(status, body) {
-    console.log('HttpHelper - getApiKey: ' + body);
-    callback(status, body == null ? null : JSON.parse(body).ApiKey);
-  });
-};
-
-
-HttpHelper.getWebServerUrl = function(callback) {
-  console.log('HttpHelper - getWebServerUrl');
-  HttpHelper.getHttpGetResponse('/misc/webserverurl/', function(status, body) {
-    console.log('HttpHelper - getWebServerUrl: ' + body);
-    callback(status, body == null ? null : JSON.parse(body).WebServerUrl);
-  });
-};
-
-HttpHelper.getWebServerHost = function(callback) {
-  console.log('HttpHelper - getWebServerHost');
-  HttpHelper.getHttpGetResponse('/misc/webserverhost/', function(status, body) {
-    console.log('HttpHelper - getWebServerHost: ' + body);
-    callback(status, body == null ? null : JSON.parse(body).WebServerHost);
-  });
-};
-
-
-
-
-
-
 HttpHelper.getSetProperty = function(propName, propValue, callback) {
   console.log('HttpHelper - getSetProperty');
   var uri = '/api/' + propName + '/';
@@ -87,54 +57,4 @@ HttpHelper.getSetProperty = function(propName, propValue, callback) {
   });
 };
 
-
-////
-HttpHelper.getLogToServer = function(callback) {
-  console.log('HttpHelper - getLogToServer');
-  HttpHelper.getHttpGetResponse('/misc/logtoserver/', function(status, body) {
-    console.log('HttpHelper - getLogToServer: ' + body);
-    callback(status, body == null ? null : JSON.parse(body).LogToServer);
-  });
-};
-
-HttpHelper.setLogToServer = function(logToServer, callback) {
-  console.log('HttpHelper - setLogToServer');
-  HttpHelper.getHttpGetResponse('/misc/logtoserver/' + logToServer + '/', function(status, body) {
-    var logToServerRet = (body == null ? '' : JSON.parse(body).LogToServer)
-    callback(status, logToServerRet == null ? null : logToServerRet);
-  });
-};
-
-HttpHelper.getLoggingServerHost = function(callback) {
-  console.log('HttpHelper - getLoggingServerHost');
-  HttpHelper.getHttpGetResponse('/misc/loggingserverhost/', function(status, body) {
-    console.log('HttpHelper - getLoggingServerHost: ' + body);
-    callback(status, body == null ? null : JSON.parse(body).LoggingServerHost);
-  });
-};
-
-HttpHelper.setLoggingServerHost = function(loggingServerHost, callback) {
-  console.log('HttpHelper - setLoggingServerHost');
-  HttpHelper.getHttpGetResponse('/misc/loggingserverhost/' + loggingServerHost + '/', function(status, body) {
-    var loggingServerHostRet = (body == null ? '' : JSON.parse(body).LoggingServerHost)
-    callback(status, loggingServerHostRet == null ? null : loggingServerHostRet);
-  });
-};
-
-HttpHelper.getLoggingServerPort = function(callback) {
-  console.log('HttpHelper - getLoggingServerPort');
-  HttpHelper.getHttpGetResponse('/misc/loggingserverport/', function(status, body) {
-    console.log('HttpHelper - getLoggingServerPort: ' + body);
-    callback(status, body == null ? null : JSON.parse(body).LoggingServerPort);
-  });
-};
-
-HttpHelper.setLoggingServerPort = function(loggingServerPort, callback) {
-  console.log('HttpHelper - setLoggingServerPort');
-  HttpHelper.getHttpGetResponse('/misc/loggingserverport/' + loggingServerPort + '/', function(status, body) {
-    var loggingServerPortRet = (body == null ? '' : JSON.parse(body).LoggingServerPort)
-    callback(status, loggingServerPortRet == null ? null : loggingServerPortRet);
-  });
-};
-////
 module.exports = HttpHelper;

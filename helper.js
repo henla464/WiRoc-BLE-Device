@@ -5,44 +5,7 @@ var httphelper = require('./http-helper');
 
 var Helper = Helper || {}
 
-Helper.getBatteryLevel = function(callback) {
-  console.log('Helper - get battery level');
-  var hostname = os.hostname();
-  if (hostname == "chip" || hostname == "nanopiair") {
-    child = exec("/usr/sbin/i2cget -f -y 0 0x34 0xb9", function (error, stdout, stderr) {
-      //console.log('stdout: ' + stdout);
-      //console.log('stderr: ' + stderr);
-      if (error !== null) {
-        console.log('exec error: ' + error);
-        callback('EXEC ERROR', null);
-      } else {
-        var intPercent = parseInt(stdout.trim());
-        console.log('Battery level - onReadRequest: value (dec)=' + intPercent);
-        callback('OK', intPercent);
-      }
-    });
-  } else { 
-     callback('OK', 75);
-  }
-
-};
-
-
-Helper.getIP = function(callback) {
-  var cmd = "hostname -I";
-  //console.log(cmd);
-  exec(cmd, function(error, stdout, stderr) {
-    if (error) {
-      console.log('error code: "' + error + '"');
-      console.log(stderr);
-      callback('ERROR');
-    }
-    stdout = stdout.trim();
-    callback('OK', stdout);
-  });
-};
-
-Helper.getIP2 = function(commandName, callback) {
+Helper.getIP = function(commandName, callback) {
   var cmd = "hostname -I";
   //console.log(cmd);
   exec(cmd, function(error, stdout, stderr) {
@@ -214,6 +177,26 @@ Helper.dropAllTables = function(commandName, callback) {
       });
     }
   });
+};
+
+Helper.getBatteryLevel = function(commandName, callback) {
+  var hostname = os.hostname();
+  if (hostname == "chip" || hostname == "nanopiair") {
+    child = exec("/usr/sbin/i2cget -f -y 0 0x34 0xb9", function (error, stdout, stderr) {
+      //console.log('stdout: ' + stdout);
+      //console.log('stderr: ' + stderr);
+      if (error !== null) {
+        console.log('exec error: ' + error);
+        callback('ERROR', commandName + ';' + error);
+      } else {
+        var intPercent = parseInt(stdout.trim());
+        console.log('Battery level - onReadRequest: value (dec)=' + intPercent);
+        callback('OK', commandName + ';' + intPercent);
+      }
+    });
+  } else { 
+        callback('OK', commandName + ';1');
+  }
 };
 
 Helper.uploadLogArchive = function(commandName, callback) {
@@ -431,13 +414,14 @@ Helper.getAll = function(commandName, callback) {
   console.log('HttpHelper - getAll');
   httphelper.getHttpGetResponse('/api/all/', function(status, body) {
     if (status != 'OK') { callback(status, commandName); return;}
-    var all = (body == null ? null : JSON.parse(body).All);
-    Helper.getBatteryLevel(function(status, intPercent) {
+    var all = (body == null ? null : JSON.parse(body).Value);
+    Helper.getBatteryLevel('batterylevel', function(status, data) {
+      var batteryPercent = data.split(';')[1];
       if (status != 'OK') { callback(status, commandName); return;}
-      Helper.getIP2('getip', function(status, data) {
+      Helper.getIP('getip', function(status, data) {
         if (status != 'OK') { callback(status, commandName + ';' + data); return;}
         var ipAddress = data.split(';')[1];
-        all = all.replace('%ipAddress%', ipAddress).replace('%batteryPercent%', intPercent);
+        all = all.replace('%ipAddress%', ipAddress).replace('%batteryPercent%', batteryPercent);
         callback(status, commandName + ';' + all);
       });
     });

@@ -132,6 +132,9 @@ CommandCharacteristic.prototype.onWriteRequest = function(data, offset, withoutR
     case 'getall':
       helper.getAll(commandName, callbackFunctionInitialized);
       break;
+    case 'batterylevel':
+      helper.getBatteryLevel(commandName, callbackFunctionInitialized);
+      break;
   }
 };
 
