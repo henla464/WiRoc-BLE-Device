@@ -91,9 +91,6 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
           var propertyNameAndValueString = thisObj._propertyNameAndValuesReadArr.join('|');
           thisObj._propertyNameAndValuesReadArr = [];
           thisObj._propertyNameAndValuesToWriteArr = [];
-          // block if transfer in progress?
-          //for (;thisObj._sendSingleFragmentInterval != null;) {}
-          //thisObj._propertyNameAndValueBuf = new Buffer(propertyNameAndValueString, "utf-8");
           thisObj._queuePropertyNameAndValueBuf.push(new Buffer(propertyNameAndValueString, "utf-8"));
           thisObj._sendSingleFragmentInterval = setInterval(thisObj.sendProperties.bind(thisObj), 50);
           callback(thisObj.RESULT_SUCCESS);
@@ -107,9 +104,13 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
 
   thisFnCallPropertyNameAndValuesToWriteArr.forEach(propAndValue => {
     console.log(propAndValue);
-    propAndValArr = propAndValue.split(';');
-    var propName = propAndValArr[0];
-    var propValue = propAndValArr[1];
+    var idx = propAndValue.indexOf(';');
+    var propName = propAndValue;
+    var propValue = '';
+    if (idx > 0) {
+      propName = propAndValue.substring(0, idx);
+      propValue = propAndValue.substring(idx+1);
+    }
     httphelper.getSetProperty(propName, propValue, callbackFunctionInitialized);
   });
   //callback(this.RESULT_SUCCESS);

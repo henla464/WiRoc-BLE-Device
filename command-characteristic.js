@@ -109,7 +109,7 @@ CommandCharacteristic.prototype.onWriteRequest = function(data, offset, withoutR
       helper.disconnectWifi(commandName, callbackFunctionInitialized);
       break;
     case 'getip':
-      helper.getIP2(commandName, callbackFunctionInitialized);
+      helper.getIP(commandName, callbackFunctionInitialized);
       break;
     case 'renewip':
       helper.renewIP(commandName, commandValue, callbackFunctionInitialized);

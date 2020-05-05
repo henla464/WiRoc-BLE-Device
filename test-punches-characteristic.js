@@ -50,7 +50,7 @@ TestPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateV
   this._maxValue = Math.min(20, maxValueSize);
   this._updateValueCallback = updateValueCallback;
   this._interval = setInterval(this.updatePunches.bind(this), 3000);
-  this._sendSingleFragmentInterval = setInterval(this.singleUpdatePunchesCall.bind(this), 250);
+  this._sendSingleFragmentInterval = setInterval(this.singleUpdatePunchesCall.bind(this), 50);
 };
 
 TestPunchesCharacteristic.prototype.onUnsubscribe = function() {
