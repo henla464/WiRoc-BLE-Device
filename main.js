@@ -4,10 +4,8 @@ var BlenoPrimaryService = bleno.PrimaryService;
 
 var httphelper = require('./http-helper');
 var helper = require('./helper');
-var MiscService = require('./misc-service');
-var miscService = new MiscService();
-var PunchesService = require('./punches-service');
-var punchesService = new PunchesService();
+var ApiService = require('./api-service');
+var apiService = new ApiService();
 
 console.log('bleno - echo');
 
@@ -21,7 +19,7 @@ function startAdv() {
         deviceName = 'WiRoc Device';
       }
       if (bleno.state === 'poweredOn') { // sometimes state has become powered off before reaching here
-      	bleno.startAdvertising(deviceName, [miscService.uuid]);
+      	bleno.startAdvertising(deviceName, [apiService.uuid]);
       }
     });
   }, 1000);
@@ -68,8 +66,7 @@ bleno.on('advertisingStart', function(error) {
 
   if (!error) {
     bleno.setServices([
-        miscService,
-	punchesService
+        apiService
       ], function(error) {
         console.log('setServices: '  + (error ? 'error ' + error : 'success'));
       }

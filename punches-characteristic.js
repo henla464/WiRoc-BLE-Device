@@ -6,8 +6,8 @@ var bleno = require('@henla464/bleno');
 var Descriptor = bleno.Descriptor;
 var BlenoCharacteristic = bleno.Characteristic;
 
-var PunchesPunchesCharacteristic = function() {
-	PunchesPunchesCharacteristic.super_.call(this, {
+var PunchesCharacteristic = function() {
+	PunchesCharacteristic.super_.call(this, {
     uuid: 'FB880901-4AB2-40A2-A8F0-14CC1C2E5608',
     properties: ['notify'],
     value: null,
@@ -32,10 +32,10 @@ var PunchesPunchesCharacteristic = function() {
   this._maxValue = 20;
 };
 
-util.inherits(PunchesPunchesCharacteristic, BlenoCharacteristic);
+util.inherits(PunchesCharacteristic, BlenoCharacteristic);
 
-PunchesPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
-  console.log('PunchesPunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize + ' ' + updateValueCallback);
+PunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
+  console.log('PunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize + ' ' + updateValueCallback);
   var thisObj = this;
   var propName = 'sendtoblenoenabled';
   var propValue = '1';
@@ -51,17 +51,17 @@ PunchesPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, upda
   this._interval = setInterval(this.updatePunches.bind(this), 2000);
 };
 
-PunchesPunchesCharacteristic.prototype.onUnsubscribe = function() {
-  console.log('PunchesPunchesCharacteristic - onUnsubscribe');
+PunchesCharacteristic.prototype.onUnsubscribe = function() {
+  console.log('PunchesCharacteristic - onUnsubscribe');
   this.disconnect();
 };
 
-PunchesPunchesCharacteristic.prototype.updatePunches = function() {
-  console.log('PunchesPunchesCharacteristic - updatePunches');
+PunchesCharacteristic.prototype.updatePunches = function() {
+  console.log('PunchesCharacteristic - updatePunches');
   var thisObj = this;
   httphelper.getSetProperty('punches', null, function(status, propertyNameAndValue) {
     var punches = propertyNameAndValue.substring('punches'.length+1);
-    console.log('PunchesPunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
+    console.log('PunchesCharacteristic - status = "' + status + '" punches = ' + (punches != null ? punches : 'null'));
     if (status == 'OK') {
       if (thisObj._updateValueCallback != null) {
         punchesBuf =  new Buffer(punches, "utf-8");
@@ -83,8 +83,8 @@ PunchesPunchesCharacteristic.prototype.updatePunches = function() {
   });
 }
 
-PunchesPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
-  console.log('PunchesPunchesCharacteristic - disconnect');
+PunchesCharacteristic.prototype.disconnect = function(clientAddress) {
+  console.log('PunchesCharacteristic - disconnect');
   clearInterval(this._interval);
   this._updateValueCallback = null;
   var thisObj = this;
@@ -99,4 +99,4 @@ PunchesPunchesCharacteristic.prototype.disconnect = function(clientAddress) {
   });	
 }
 
-module.exports = PunchesPunchesCharacteristic;
+module.exports = PunchesCharacteristic;
