@@ -157,7 +157,7 @@ Helper.dropAllTables = function(commandName, callback) {
       console.log('exec error: ' + error);
       callback('ERROR', commandName + ';' + error);
     } else {
-      httphelper.dropAllTables(function(status, retWebServiceStatus) {
+      httphelper.getHttpGetResponse('/api/dropalltables/', function(status, retWebServiceStatus) {
         console.log('Helper.dropAllTables - status = "' + status + '" value = ' + (retWebServiceStatus != null ? retWebServiceStatus : 'null'));
         if (status == 'OK' && retWebServiceStatus == 'OK') {
           // start WiRoc-Python service
@@ -207,11 +207,11 @@ Helper.uploadLogArchive = function(commandName, callback) {
       var zipFilePath = helper.getZipFilePath(btAddress, dateNow);
       Helper.zipLogArchive(zipFilePath, function(status2) {
         if (status2 == 'OK') {
-          httphelper.getApiKey(function(status3, apiKey) {
+          httphelper.getHttpGetResponse('/api/apikey/', function(status3, apiKey) {
             if (status3 == 'OK') {
-              httphelper.getWebServerUrl(function(status4, serverUrl) {
+              httphelper.getHttpGetResponse('/api/webserverurl/', function(status4, serverUrl) {
                 if (status4 == 'OK') {
-                  httphelper.getWebServerHost(function(status5, serverHost) {
+                  httphelper.getHttpGetResponse('/api/webserverhost/', function(status5, serverHost) {
                     if (status5 == 'OK') {
                       Helper.uploadLogArchive(apiKey, zipFilePath, serverUrl, serverHost, function(status6) {
                         if (status6 == 'OK') {
