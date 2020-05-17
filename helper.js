@@ -201,19 +201,22 @@ Helper.getBatteryLevel = function(commandName, callback) {
 
 Helper.uploadLogArchive = function(commandName, callback) {
   console.log('Helper.uploadLogArchive');
-  helper.getBTAddress(function(status, btAddress) {
+  Helper.getBTAddress(function(status, btAddress) {
     if (status == 'OK') {
       var dateNow = new Date();
-      var zipFilePath = helper.getZipFilePath(btAddress, dateNow);
+      var zipFilePath = Helper.getZipFilePath(btAddress, dateNow);
       Helper.zipLogArchive(zipFilePath, function(status2) {
         if (status2 == 'OK') {
-          httphelper.getHttpGetResponse('/api/apikey/', function(status3, apiKey) {
+          httphelper.getHttpGetResponse('/api/apikey/', function(status3, retObj) {
+            var apiKey = JSON.parse(retObj).Value;
             if (status3 == 'OK') {
-              httphelper.getHttpGetResponse('/api/webserverurl/', function(status4, serverUrl) {
+              httphelper.getHttpGetResponse('/api/webserverurl/', function(status4, retObj) {
+                var serverUrl = JSON.parse(retObj).Value;
                 if (status4 == 'OK') {
-                  httphelper.getHttpGetResponse('/api/webserverhost/', function(status5, serverHost) {
+                  httphelper.getHttpGetResponse('/api/webserverhost/', function(status5, retObj) {
+                    var serverHost = JSON.parse(retObj).Value;
                     if (status5 == 'OK') {
-                      Helper.uploadLogArchive(apiKey, zipFilePath, serverUrl, serverHost, function(status6) {
+                      Helper.uploadLogArchive2(apiKey, zipFilePath, serverUrl, serverHost, function(status6) {
                         if (status6 == 'OK') {
                           console.log('Helper.uploadLogArchive - uploadLogArchive status == OK');
                           callback('OK', commandName);
@@ -249,23 +252,6 @@ Helper.uploadLogArchive = function(commandName, callback) {
   });
 };
 
-Helper.upgradeWiRocPython = function(commandName, commandValue, callback) {
-  console.log('Helper.upgradeWiRocPython - wirocpython, version: ' + commandValue);
-  helper.upgradeWiRocPython(commandValue, function (status) {
-    if (status == "OK") {
-      callback('OK', commandName);
-    }
-  });
-};
-
-Helper.upgradeWiRocBLE = function(commandName, commandValue, callback) {
-  console.log('Helper.upgradeWiRocBLE - wirocble, version: ' + commandValue);
-  helper.upgradeWiRocBLE(commandValue, function (status) {
-    if (status == "OK") {
-      callback('OK', commandName);
-    }
-  });
-};
 
 Helper.getZipFilePath = function(btAddress, date) {
 	var filePath = "/home/chip/LogArchive/LogArchive_" + btAddress + "_" + date.toISOString() + ".zip";
@@ -287,12 +273,12 @@ Helper.zipLogArchive = function(zipFilePath, callback) {
   });
 };
 
-Helper.uploadLogArchive = function(apiKey, filePath, serverUrl, serverHost, callback) {
+Helper.uploadLogArchive2 = function(apiKey, filePath, serverUrl, serverHost, callback) {
   var cmd = "curl -X POST \"" + serverUrl + "/api/v1/LogArchives\" -H \"host: " + serverHost + "\" -H \"accept: application/json\" -H \"Authorization: " + apiKey + "\" -F \"newfile=@" + filePath +"\"";
   //console.log(cmd);
   exec(cmd, function(error, stdout, stderr) {
     if (error) {
-      console.log('Helper.zipLogArchive: error code: "' + error + '"');
+      console.log('Helper.uploadLogArchive2: error code: "' + error + '"');
       console.log(stderr);
       callback('ERROR');
     } else {
@@ -304,8 +290,7 @@ Helper.uploadLogArchive = function(apiKey, filePath, serverUrl, serverHost, call
   });
 };
 
-
-Helper.upgradeWiRocPython = function(version, callback) {
+Helper.upgradeWiRocPython = function(commandName, version, callback) {
   console.log("helper.upgradeWiRocPython");
   const spawn = require('child_process').spawn;
   const path = require('path');
@@ -321,10 +306,10 @@ Helper.upgradeWiRocPython = function(version, callback) {
   });
   child.unref();
   console.log("Spawned installWiRocPython.sh");
-  callback('OK');
+  callback('OK', commandName);
 };
 
-Helper.upgradeWiRocBLE = function(version, callback) {
+Helper.upgradeWiRocBLE = function(commandName, version, callback) {
   console.log("helper.upgradeWiRocBLE");
   const spawn = require('child_process').spawn;
   const path = require('path');
@@ -340,7 +325,7 @@ Helper.upgradeWiRocBLE = function(version, callback) {
   });
   child.unref();
   console.log("Spawned installWiRocBLE.sh");
-  callback('OK');
+  callback('OK', commandName);
 };
 
 Helper.stopHCI = function(callback) {
