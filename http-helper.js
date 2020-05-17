@@ -31,7 +31,7 @@ HttpHelper.getHttpGetResponse = function(thePath, callback) {
 
 HttpHelper.getTestPunches = function(testBatchGuid, includeAll, callback) {
   console.log('HttpHelper - getTestPunches');
-  HttpHelper.getHttpGetResponse('/misc/testpunches/gettestpunches/' + testBatchGuid + '/' + (includeAll ? "true":"false") + '/', function(status, body) {
+  HttpHelper.getHttpGetResponse('/api/testpunches/gettestpunches/' + testBatchGuid + '/' + (includeAll ? "true":"false") + '/', function(status, body) {
     console.log('HttpHelper - getTestPunches: ' + body);
     callback(status, body == null ? null : body);
   });
@@ -39,7 +39,7 @@ HttpHelper.getTestPunches = function(testBatchGuid, includeAll, callback) {
 
 HttpHelper.addTestPunch = function(testBatchGuid, siNo, callback) {
   console.log('HttpHelper - addTestPunch');
-  HttpHelper.getHttpGetResponse('/misc/testpunches/addtestpunch/' + testBatchGuid + '/' + siNo + '/', function(status, body) {
+  HttpHelper.getHttpGetResponse('/api/testpunches/addtestpunch/' + testBatchGuid + '/' + siNo + '/', function(status, body) {
     console.log('HttpHelper - addTestPunch: ' + body);
     callback(status, body == null ? null : JSON.parse(body).Status);
   });
