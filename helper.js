@@ -111,9 +111,9 @@ Helper.getListWifi = function(commandName, callback) {
 Helper.connectWifi = function(commandName, commandValue, callback) {
   var hostname = os.hostname();
   var wlanIFace = 'wlan0';
-  if (hostname.toLowerCase() != 'chip') {
-    wlanIFace = 'wlp2s0';
-  }
+  //if (hostname.toLowerCase() != 'chip') {
+  //  wlanIFace = 'wlp2s0';
+  //}
   
   var wifiName = commandValue.split(/\r?\n/)[0];
   var wifiPassword = commandValue.split(/\r?\n/)[1];
@@ -133,9 +133,9 @@ Helper.connectWifi = function(commandName, commandValue, callback) {
 Helper.disconnectWifi = function(commandName, callback) {
   var hostname = os.hostname();
   var wlanIFace = 'wlan0';
-  if (hostname.toLowerCase() != 'chip') {
-    wlanIFace = 'wlp2s0';
-  }
+  //if (hostname.toLowerCase() != 'chip') {
+  //  wlanIFace = 'wlp2s0';
+  //}
   
   var cmd = "nmcli device disconnect " + wlanIFace;
   console.log(cmd);
