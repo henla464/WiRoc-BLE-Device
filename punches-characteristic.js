@@ -46,7 +46,7 @@ PunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValue
         console.log('sendtoblenoenabled Error');
       }
   });
-  this._maxValue = Math.min(20, maxValueSize);
+  this._maxValue = maxValueSize;
   this._updateValueCallback = updateValueCallback;
   this._interval = setInterval(this.updatePunches.bind(this), 2000);
 };

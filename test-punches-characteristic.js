@@ -47,7 +47,7 @@ util.inherits(TestPunchesCharacteristic, BlenoCharacteristic);
 
 TestPunchesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
   console.log('TestPunchesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize);
-  this._maxValue = Math.min(20, maxValueSize);
+  this._maxValue = maxValueSize;
   this._updateValueCallback = updateValueCallback;
   this._interval = setInterval(this.updatePunches.bind(this), 3000);
   this._sendSingleFragmentInterval = setInterval(this.singleUpdatePunchesCall.bind(this), 50);

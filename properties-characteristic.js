@@ -39,7 +39,7 @@ util.inherits(PropertiesCharacteristic, BlenoCharacteristic);
 
 PropertiesCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
   console.log('PropertiesCharacteristic - onSubscribe - maxValueSize ' + maxValueSize);
-  this._maxValue = Math.min(20, maxValueSize);
+  this._maxValue = maxValueSize;
   this._updateValueCallback = updateValueCallback;
 };
 

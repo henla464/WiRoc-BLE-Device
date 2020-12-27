@@ -36,7 +36,7 @@ util.inherits(CommandCharacteristic, BlenoCharacteristic);
 
 CommandCharacteristic.prototype.onSubscribe = function(maxValueSize, updateValueCallback) {
   console.log('CommandCharacteristic - onSubscribe - maxValueSize ' + maxValueSize);
-  this._maxValue = Math.min(20, maxValueSize);
+  this._maxValue = maxValueSize;
   this._updateValueCallback = updateValueCallback;
 };
 
