@@ -63,6 +63,7 @@ Helper.startPatchAP6212 = function(callback) {
   var hostname = os.hostname();
   if (hostname != "nanopiair") {
     callback("OK"); // only nanopiair needs patching
+    return;
   }
   var cmd = "systemctl start ap6212-bluetooth";
   console.log(cmd);

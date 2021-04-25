@@ -104,7 +104,7 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
 
   thisFnCallPropertyNameAndValuesToWriteArr.forEach(propAndValue => {
     console.log(propAndValue);
-    var idx = propAndValue.indexOf(';');
+    var idx = propAndValue.indexOf('\t');
     var propName = propAndValue;
     var propValue = '';
     if (idx > 0) {
@@ -112,23 +112,22 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
       propValue = propAndValue.substring(idx+1);
     }
     if (propName == 'all') {
-	if (propVal != null) {
+	if (propValue != null) {
             // the very first call will be to fetch 'all', this call should include
             // the chunklength ie. the number of bytes that can be sent at a time
-            chunkLength = int(propVal)
+            chunkLength = parseInt(propValue);
             console.log("chunklength: " + chunkLength);
-            propVal = null
+            propValue = null;
         }
+    }
     else if (propName == 'upgradewirocpython') {
         // Use helper function and then return instead of calling web service
         helper.upgradeWiRocPython(propName, propVal, callbackFunctionInitialized);
-        //self.notify(propName + '\t' + replyString)
         return
     }
                 
     httphelper.getSetProperty(propName, propValue, callbackFunctionInitialized);
   });
-  //callback(this.RESULT_SUCCESS);
 };
 
 module.exports = PropertiesCharacteristic;
