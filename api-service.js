@@ -5,7 +5,6 @@ var bleno = require('@henla464/bleno');
 var BlenoPrimaryService = bleno.PrimaryService;
 
 var PropertiesCharacteristic = require('./properties-characteristic');
-var CommandCharacteristic = require('./command-characteristic');
 var PunchesCharacteristic = require('./punches-characteristic');
 var TestPunchesCharacteristic = require('./test-punches-characteristic');
 
@@ -14,7 +13,6 @@ function ApiService() {
       uuid: 'FB880900-4AB2-40A2-A8F0-14CC1C2E5608',
       characteristics: [
 	new PropertiesCharacteristic(),
-	new CommandCharacteristic(),
 	new PunchesCharacteristic(),
 	new TestPunchesCharacteristic()
       ]

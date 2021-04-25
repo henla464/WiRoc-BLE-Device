@@ -53,7 +53,7 @@ HttpHelper.getSetProperty = function(propName, propValue, callback) {
   }
   console.log('HttpHelper - getSetProperty: ' + uri);
   HttpHelper.getHttpGetResponse(uri, function(status, body) {
-    callback(status, body == null ? null : propName + ';' + JSON.parse(body).Value);
+    callback(status, body == null ? null : propName + '\t' + JSON.parse(body).Value);
   });
 };
 

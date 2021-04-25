@@ -111,6 +111,21 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
       propName = propAndValue.substring(0, idx);
       propValue = propAndValue.substring(idx+1);
     }
+    if (propName == 'all') {
+	if (propVal != null) {
+            // the very first call will be to fetch 'all', this call should include
+            // the chunklength ie. the number of bytes that can be sent at a time
+            chunkLength = int(propVal)
+            console.log("chunklength: " + chunkLength);
+            propVal = null
+        }
+    else if (propName == 'upgradewirocpython') {
+        // Use helper function and then return instead of calling web service
+        helper.upgradeWiRocPython(propName, propVal, callbackFunctionInitialized);
+        //self.notify(propName + '\t' + replyString)
+        return
+    }
+                
     httphelper.getSetProperty(propName, propValue, callbackFunctionInitialized);
   });
   //callback(this.RESULT_SUCCESS);

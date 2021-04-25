@@ -306,7 +306,7 @@ Helper.upgradeWiRocPython = function(commandName, version, callback) {
   });
   child.unref();
   console.log("Spawned installWiRocPython.sh");
-  callback('OK', commandName);
+  callback('OK', commandName + '\tOK');
 };
 
 Helper.upgradeWiRocBLE = function(commandName, version, callback) {
