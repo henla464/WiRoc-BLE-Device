@@ -13,7 +13,7 @@ console.log('bleno - echo');
 function startAdv() {
   setTimeout(function() {
     httphelper.getSetProperty('wirocdevicename', null, function (status, propNameAndDeviceName) {
-      var deviceName = propNameAndDeviceName.split(';')[1];
+      var deviceName = propNameAndDeviceName.split('\t')[1];
       console.log('WiRocDeviceName: ' + (deviceName != null ? deviceName : 'null') + ' Status: ' + status);
       if (deviceName == null) {
         deviceName = 'WiRoc Device';
