@@ -52,8 +52,16 @@ HttpHelper.getSetProperty = function(propName, propValue, callback) {
     uri += propValue + '/';
   }
   console.log('HttpHelper - getSetProperty: ' + uri);
+  
   HttpHelper.getHttpGetResponse(uri, function(status, body) {
-    callback(status, body == null ? null : propName + '\t' + JSON.parse(body).Value);
+	console.log('HttpHelper - getSetProperty status: ' + status);
+	if (status == "CONNECTION ERROR") {
+		callback(status,'');
+	}
+	else 
+	{
+		callback(status, body == null ? null : propName + '\t' + JSON.parse(body).Value);
+	}
   });
 };
 

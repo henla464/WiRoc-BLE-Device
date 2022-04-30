@@ -1,7 +1,6 @@
 var util = require('util');
 var httphelper = require('./http-helper');
-
-
+var helper = require('./helper');
 var bleno = require('@henla464/bleno');
 
 var Descriptor = bleno.Descriptor;
@@ -122,7 +121,7 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
     }
     else if (propName == 'upgradewirocpython') {
         // Use helper function and then return instead of calling web service
-        helper.upgradeWiRocPython(propName, propVal, callbackFunctionInitialized);
+        helper.upgradeWiRocPython(propName, propValue, callbackFunctionInitialized);
         return
     } 
     else if (propName == 'wirocdevicename') {
