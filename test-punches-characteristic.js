@@ -165,14 +165,14 @@ TestPunchesCharacteristic.prototype.addTestPunch = function(callback) {
 TestPunchesCharacteristic.prototype.onWriteRequest = function(data, offset, withoutResponse, callback) {
   console.log('TestPunchesCharacteristic - onWriteRequest');
   var noOfPunchesAndIntervalAndSINo = data.toString('utf-8');
-  this._noOfPunchesToAdd = parseInt(noOfPunchesAndIntervalAndSINo.split(';')[0]);
+  this._noOfPunchesToAdd = parseInt(noOfPunchesAndIntervalAndSINo.split('\t')[0]);
   this._noOfPunchesAdded = 0;
   var intervalMs = 1000;
-  if (noOfPunchesAndIntervalAndSINo.split(';').length > 1) {
-    intervalMs = parseInt(noOfPunchesAndIntervalAndSINo.split(';')[1]);
+  if (noOfPunchesAndIntervalAndSINo.split('\t').length > 1) {
+    intervalMs = parseInt(noOfPunchesAndIntervalAndSINo.split('\t')[1]);
   }
-  if (noOfPunchesAndIntervalAndSINo.split(';').length > 2) {
-    this._siNo = noOfPunchesAndIntervalAndSINo.split(';')[2];
+  if (noOfPunchesAndIntervalAndSINo.split('\t').length > 2) {
+    this._siNo = noOfPunchesAndIntervalAndSINo.split('\t')[2];
   }
   console.log("Number of punches to add: " + this._noOfPunchesToAdd + " interval: " + intervalMs + " si number: " + this._siNo);
   this._testBatchGuid = this.getNewGuid();
