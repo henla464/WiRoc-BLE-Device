@@ -181,6 +181,7 @@ TestPunchesCharacteristic.prototype.onWriteRequest = function(data, offset, with
   this._interval = null;
   clearInterval(this._addPunchInterval);
   this._addPunchInterval = null;
+  this.addTestPunch();
   this._addPunchInterval = setInterval(this.addTestPunch.bind(this), intervalMs);
   callback(this.RESULT_SUCCESS);
 };

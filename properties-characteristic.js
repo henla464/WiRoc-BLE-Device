@@ -124,7 +124,8 @@ PropertiesCharacteristic.prototype.onWriteRequest = function(data, offset, witho
         // Use helper function and then return instead of calling web service
         helper.upgradeWiRocPython(propName, propVal, callbackFunctionInitialized);
         return
-    } if (propName == 'wirocdevicename') {
+    } 
+    else if (propName == 'wirocdevicename') {
     	bleno.setDeviceName(propValue);
     }
                 
